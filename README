@@ -1,0 +1,185 @@
+================================================================================
+				jquerymobile-router
+================================================================================
+
+jQuery Mobile router is a plugin for jQuery Mobile to enhance the framework
+with a client side router/controller that works with jQuery Mobile events
+(pagebeforecreate, pagecreate, pagebeforeshow, pageshow, pagebeforehide, pagehide).
+
+In addition, it extends jQM with a couple of useful things you may want to use in
+a scenario where you are rendering the pages dynamically on the client:
+	* support for client-side parameters in the hash part of the url (yay!!!)
+	* lets you re-use an already fetched ajax page instead of getting it from the
+	  server every time its querystring changes
+
+
+
+
+=====================
+The router/controller
+=====================
+
+Whenever jQuery Mobile changes the url (usually the fragment part) the router checks
+if that particular url matches one of your routes and calls the handler you've
+provided with a bunch of useful arguments.
+
+When you define a route, you'll provide:
+	* a regular expression to test the url/hash against
+	* an handler (a function)
+	* when your handler must be called (for example, you may decide to setup a route
+	  only when the pagecreate and pagebeforeshow jQM events are dispatched)
+
+The plugin exports a class in $.mobile.Router and you can instantiate your routers
+with the following arguments:
+
+var approuter=new $.mobile.Router(myRoutes, myHandlers, options);
+
+	* myRoutes is an object defining your routes
+	* myHandlers is an object with your function handlers
+	* options is an object with a certain configuration (not really used at this time)
+
+
+
+
+---------------
+myRoutes object
+---------------
+myRoutes supports the following formats:
+	* this one binds a certain route to the pagebeforeshow event and calls the handler
+	  "handlerName" defined in the myHandlers object
+
+		{
+			"regularExpression": "handlerName"
+		}
+
+	* this is the full syntax to specify various jQM events you want your route to be
+	  bound to.
+	  The object defines an "handler" property with a string value: this is the name
+	  of a function defined in the myHandlers object.
+	  The object also defines an "events" property with a string value: this is a list
+	  of (shortened) jQM events, separated by a ",". Your route will be called only when
+	  these events are fired. 
+	  
+		{
+			"regularExpression": { 
+				handler: "handlerName",
+				events: "bc,c,bs,s,bh,h"
+			}
+		}
+	  Please refer to the following schema to understand event codes (it's really
+	  straightforward)
+
+		bc	=> pagebeforecreate
+		c	=> pagecreate
+		bs	=> pagebeforeshow
+		s	=> pageshow
+		bh	=> pagebeforehide
+		h	=> pagehide
+
+
+This is an example of a common myRoutes object:
+
+	{
+		"#/localpage(?:[?/](.*))?": {
+			handler: "localpage", events: "bs,bh"
+		},
+
+		"ajaxPage.html(?:[?](.*))?": {
+			handler: "ajaxPage", events: "c,bs"
+		}
+	}
+
+
+*****	PLEASE REMEMBER THAT CLIENT-SIDE PARAMETERS FOR LOCAL-PAGES MUST BE ENABLED	*****
+*****	USING THE JQM EXTENSIONS PROVIDED BY THIS PLUGIN.				*****
+*****	CLIENT-SIDE PARAMETERS FOR LOCAL PAGES ALSO FOLLOW A CERTAIN FORMAT: PLEASE	*****
+*****	READ THE FOLLOWING SECTION TO BETTER UNDERSTAND HOW THEY WORKS			*****
+
+
+
+
+-----------------
+myHandlers object
+-----------------
+There isn't much to say about this object. Simply provide the function handlers you've
+specified in the myRoutes object.
+
+For example:
+	{
+		handlerName: function(eventType,matchObj,ui){
+			// your code here
+		}
+	}
+
+Your handlers will be called with the following arguments:
+	* eventType: the name of the jQM event that's triggering the handler (pagebeforeshow,
+	  pagecreate, pagehide, etc)
+	* matchObj: the handler is called when your regular expression matches the current
+	  url or fragment. This is the match object of the regular expression.
+	  If the regular expression uses groups, they will be available in this object.
+	  Cool eh?
+	* ui: this is the second argument provided by the jQuery Mobile event. Usually holds
+	  the reference to either the next page (nextPage) or previous page (prevPage).
+	  More information here: http://jquerymobile.com/demos/1.0b1/docs/api/events.html
+
+
+
+
+==============
+jQM extensions
+==============
+
+Have you ever wanted client-side parameters in the hash part of the url in jQuery Mobile?
+Do you want to stop jQuery Mobile from fetching the same html file (because no server-side
+processing occours) when you change the querystring for that page?
+
+Well, these extensions may help you here.
+
+The extensions provided by jquerymobile-router supports the following configuration:
+		
+	* $.mobile.jqmRouter.supportHashParams=true
+		Anchors with parameters encoded into the hash will be accepted by
+		jquery mobile and the jqm router.
+		Hash parameters *MUST* have one of these formats:
+			#page?foo=bar&bar=foo
+			#/page?foo=bar&bar=foo
+			#/page/parameter/parameter2
+		When you define your page please remember to set the correct id or
+		data-url in the markup of the multipage template.
+		For the example above they would be:
+			data-url="page"
+			data-url="/page"
+			data-url="/page"
+
+		Please remember that since we want bookmarkable urls, this plugin
+		also has to route the initial url. If pushState isn't used by jQM,
+		there's no way to tell whether a page is local or to be fetched via
+		ajax, so please, *** DON'T USE PAGE IDs WITH THE SAME NAME OF DIRECTORIES
+		ON THE FILESYSTEM ***
+
+	* $.mobile.jqmRouter.reuseQueriedAjaxPages=true
+		Tells the framework to reuse already fetched ajax pages instead of
+		getting them each time the query string differs from the previous ones
+
+
+*** The plugin will only process links (anchors) defining the following attribute ***
+*** in the html markup (because I don't want to mess with normal buttons):	  ***
+
+	data-params="true"
+
+
+For example:
+	<a href="#/localpage/param/1/3" data-params="true">#localpage with params v1</a>
+        <a href="#/localpage?foobarbaz" data-params="true">#localpage with params v2</a>
+        <a href="#/localpage?foo=bar&bar=foo" data-params="true">#localpage with params v3</a>
+
+Please remember that if you're in a multipage template, you've to setup the id or (better) the
+data-url of the local dynamic page you want to use with client-side parameters.
+
+For the above examples...
+
+	<div data-role="page" data-url="/localpage">...</div>
+
+
+For bugs, comments, patches and requests mail me!
+
