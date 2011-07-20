@@ -12,6 +12,8 @@ a scenario where you are rendering the pages dynamically on the client:
 	* lets you re-use an already fetched ajax page instead of getting it from the
 	  server every time its querystring changes
 
+The jQuery Mobile router javascript file must be loaded before jQuery Mobile.
+
 
 
 
@@ -133,9 +135,12 @@ Have you ever wanted client-side parameters in the hash part of the url in jQuer
 Do you want to stop jQuery Mobile from fetching the same html file (because no server-side
 processing occours) when you change the querystring for that page?
 
-Well, these extensions may help you here.
+Well, these extensions may help you here, but at the moment they only work with the latest
+github build of jQM.
 
-The extensions provided by jquerymobile-router supports the following configuration:
+The extensions provided by jquerymobile-router must be configured in a classic jQM
+"mobileinit" event, before actually loading the jqmrouter javascript file.
+The following options are supported:
 		
 	* $.mobile.jqmRouter.supportHashParams=true
 		Anchors with parameters encoded into the hash will be accepted by
