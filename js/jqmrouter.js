@@ -1,3 +1,6 @@
+/* jQueryMobile-router v0.2
+ * Copyright 2011, Andrea Zicchetti
+ */
 (function($){
 
 $(document).bind("mobileinit",function(){
@@ -85,7 +88,9 @@ $(document).bind("mobileinit",function(){
 		/* userRoutes format:
 			{
 				"regexp": "function name", // defaults to jqm pagebeforeshow event
-				"regexp": { handler: "function name", events: "bc,c,bs,s,bh,h"	}
+				"regexp": function(){ ... }, // defaults to jqm pagebeforeshow event
+				"regexp": { handler: "function name", events: "bc,c,bs,s,bh,h"	},
+				"regexp": { handler: function(){ ... }, events: "bc,c,bs,s,bh,h" }
 			}
 		*/
 		var routes={
@@ -98,12 +103,12 @@ $(document).bind("mobileinit",function(){
 			bh: "pagebeforehide", h: "pagehide"
 		};
 		userRoutes=userRoutes||{};
-		userHandlers=userHandlers||{};
+		this.userHandlers=userHandlers||{};
 		this.conf=$.extend({
 			pushState: false
 		}, conf || {});
 		$.each(userRoutes,function(r,el){
-			if(typeof(el)=="string"){
+			if(typeof(el)=="string" || typeof(el)=="function"){
 				if (routes.pagebeforeshow===null) routes.pagebeforeshow={};
 				routes.pagebeforeshow[r]=el;
 				if (! routesRex.hasOwnProperty(r)){
@@ -140,7 +145,6 @@ $(document).bind("mobileinit",function(){
 		);
 		this.routes=routes;
 		this.routesRex=routesRex;
-		$.extend(this,userHandlers);
 	}
 	$.extend($.mobile.Router.prototype,{
 		_processRoutes: function(e,ui,page){
@@ -152,14 +156,22 @@ $(document).bind("mobileinit",function(){
 			;
 			// when pagebeforecreate and pagecreate are fired, the url is still pointing
 			// to the previous page
-			if (e.type in {"pagebeforecreate":true, "pagecreate": true}){
+			if (e.type in {
+				"pagebeforecreate":true, "pagecreate": true,
+				"pagebeforehide":true, "pagehide":true
+			}){
 				url=(!this.conf.pushState?"#":"")+$(page).jqmData("url");
 			}
 			$.each(this.routes[e.type],function(route,handler){
-				var res;
+				var res, handleFn;
 				if ( (res=url.match(_self.routesRex[route])) ){
-					if (typeof(_self[handler])=="function"){
-						try { _self[handler](e.type,res,ui);
+					if (typeof(handler)=="function"){
+						handleFn=handler;
+					} else if (typeof(_self.userHandlers[handler])=="function"){
+						handleFn=_self.userHandlers[handler];
+					}
+					if (handleFn){
+						try { handleFn(e.type,res,ui,page);
 						}catch(err){ debug(err); }
 					}
 				}

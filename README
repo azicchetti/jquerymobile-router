@@ -47,17 +47,25 @@ var approuter=new $.mobile.Router(myRoutes, myHandlers, options);
 myRoutes object
 ---------------
 myRoutes supports the following formats:
-	* this one binds a certain route to the pagebeforeshow event and calls the handler
-	  "handlerName" defined in the myHandlers object
+	* this one binds a certain route to the pagebeforeshow event and calls the handler,
+	  which can be an inline function or a function name (a string) that must be defined
+	  in the myHandlers object
 
 		{
-			"regularExpression": "handlerName"
+			"regularExpression": "handlerName",
+
+			/* or */
+			
+			"regularExpression": function(){
+				// your inline function here ...
+			}
 		}
 
 	* this is the full syntax to specify various jQM events you want your route to be
 	  bound to.
 	  The object defines an "handler" property with a string value: this is the name
-	  of a function defined in the myHandlers object.
+	  of a function defined in the myHandlers object. Again, you may also put an inline
+	  function in the "handler" property instead of a string.
 	  The object also defines an "events" property with a string value: this is a list
 	  of (shortened) jQM events, separated by a ",". Your route will be called only when
 	  these events are fired. 
@@ -66,7 +74,14 @@ myRoutes supports the following formats:
 			"regularExpression": { 
 				handler: "handlerName",
 				events: "bc,c,bs,s,bh,h"
-			}
+			},
+
+			/* or */
+
+			"regularExpression": { 
+				handler: function(){ ... },
+				events: "bc,c,bs,s,bh,h"
+			},
 		}
 	  Please refer to the following schema to understand event codes (it's really
 	  straightforward)
@@ -108,7 +123,7 @@ specified in the myRoutes object.
 
 For example:
 	{
-		handlerName: function(eventType,matchObj,ui){
+		handlerName: function(eventType,matchObj,ui,page){
 			// your code here
 		}
 	}
@@ -123,6 +138,7 @@ Your handlers will be called with the following arguments:
 	* ui: this is the second argument provided by the jQuery Mobile event. Usually holds
 	  the reference to either the next page (nextPage) or previous page (prevPage).
 	  More information here: http://jquerymobile.com/demos/1.0b1/docs/api/events.html
+	* page: the dom element that originated the jquery mobile page event
 
 
 
