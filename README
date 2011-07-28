@@ -178,6 +178,12 @@ The following options are supported:
 		ajax, so please, *** DON'T USE PAGE IDs WITH THE SAME NAME OF DIRECTORIES
 		ON THE FILESYSTEM ***
 
+		NOTE:
+			When you use hash params for internal pages with the following
+			format: #/page...etc
+			the route regexp must not contain the initial "#".
+			So, "#/page" won't match but "/page" will.
+
 	* $.mobile.jqmRouter.reuseQueriedAjaxPages=true
 		Tells the framework to reuse already fetched ajax pages instead of
 		getting them each time the query string differs from the previous ones

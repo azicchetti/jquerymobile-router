@@ -6,12 +6,10 @@
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
         <script type="text/javascript">
 		$(document).bind("mobileinit",function(){
-			$.extend($.mobile,{
-				jqmRouter: {
-					supportHashParams: true,
-					reuseQueriedAjaxPages: true
-				}
-			});
+			$.mobile.jqmRouter={
+				supportHashParams: true,
+				reuseQueriedAjaxPages: true
+			}
 		});
         </script>
         <script type="text/javascript" src="../js/jqmrouter.js"></script>
@@ -19,8 +17,7 @@
 	<script type="text/javascript">
 		var router=new $.mobile.Router({
 			"#localpage2(?:[?/](.*))?": "localpage2",
-			"#/localpage(?:[?/](.*))?": {handler: "localpage", events: "bc,c,bs,s"},
-			"testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s"}
+			"/localpage(?:[?/](.*))?": {handler: "localpage", events: "bc,c,bs,s"}
 		},{
 			localpage: function(type,match,ui){
 				console.log("localpage: "+type);
@@ -28,10 +25,6 @@
 			},
 			localpage2: function(type,match,ui){
 				console.log("localpage2: "+type);
-				console.log(match);
-			},
-			ajaxPage: function(type,match,ui){
-				console.log("ajaxPage: "+type);
 				console.log(match);
 			}
 		});
@@ -58,10 +51,6 @@
                         <a href="#/localpage/param/1/3" data-params="true">#localpage with params v1</a><br/>
                         <a href="#/localpage?foobarbaz" data-params="true">#localpage with params v2</a><br/>
                         <a href="#/localpage?foo=bar&bar=foo" data-params="true">#localpage with params v3</a><br/>
-			You shouldn't mix a multipage template with ajax pages but this is just a test page... so we don't mind if something breaks with back buttons and so on. Please test only one kind of links, local or ajax, not both in the same session (without reloading the page).<br/>
-                        <a href="testAjax.html" data-params="true">Ajax Page</a><br/>
-                        <a href="testAjax.html?foo=bar&bar=foo" data-params="true">Ajax Page with params v1</a><br/>
-                        <a href="testAjax.html?/foo/bar/baz" data-params="true">Ajax Page with params v2</a><br/>
                 </p>
         </div>
 

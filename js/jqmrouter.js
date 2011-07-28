@@ -1,4 +1,4 @@
-/* jQueryMobile-router v0.2
+/* jQueryMobile-router v0.3
  * Copyright 2011, Andrea Zicchetti
  */
 (function($){
@@ -29,6 +29,16 @@ $(document).bind("mobileinit",function(){
 			Tells the framework to reuse already fetched ajax pages instead of
 			getting them each time the query string differs from the previous ones
 
+		$.mobile.jqmRouter.fixFirstPageDataUrl=true
+		$.mobile.jqmRouter.firstPageDataUrl="index.html"
+			jQM doesn't handle correctly the dataurl of the first page you display
+			in a single-page template mode. In fact, the page is fetched again
+			from the server the first time you try to access it through a link.
+			If this option is set to true, jquery mobile router extensions will
+			try to fix this problem. In order to set the data url, you have to
+			provide the name of the file containing the first page into the
+			"firstPageDataUrl" property (for example: index.html)
+
 		By default, the plugin handles only anchors with the data-params attribute defined.
 
 		*** supportHashParams and reuseQueriedAjaxPages only work with the latest github
@@ -38,7 +48,8 @@ $(document).bind("mobileinit",function(){
 
 	var config=$.extend({
 		supportHashParams: false,
-		reuseQueriedAjaxPages: false
+		reuseQueriedAjaxPages: false,
+		fixFirstPageDataUrl: false, firstPageDataUrl: "index.html"
 	},$.mobile.jqmRouter || {});
 
 
@@ -82,6 +93,22 @@ $(document).bind("mobileinit",function(){
 				});
 			}
 		}
+	}
+	if (config.fixFirstPageDataUrl){
+		$(document).ready(function(){
+			var page=$(":jqmData(role='page')").first();
+			var	dataUrl=page.jqmData("url"),
+				guessedDataUrl=
+					window.location.pathname.slice(-1)=="/"?
+						window.location.pathname
+						+config.firstPageDataUrl
+						:window.location.pathname
+			;
+			if (dataUrl!=guessedDataUrl){
+				page.attr("data-url",guessedDataUrl)
+					.jqmData("url",guessedDataUrl);
+			}
+		});
 	}
 
 	$.mobile.Router=function(userRoutes,userHandlers,conf){
@@ -151,17 +178,28 @@ $(document).bind("mobileinit",function(){
 			var 	_self=this,
 				url=( !this.conf.pushState ?
 					window.location.hash
-					:window.location.pathname+window.location.search+window.location.hash
+					:window.location.pathname
+						+window.location.search
+						+window.location.hash
 				)
 			;
 			// when pagebeforecreate and pagecreate are fired, the url is still pointing
 			// to the previous page
-			if (e.type in {
+			if (!url || e.type in {
 				"pagebeforecreate":true, "pagecreate": true,
 				"pagebeforehide":true, "pagehide":true
 			}){
-				url=(!this.conf.pushState?"#":"")+$(page).jqmData("url");
+				var dataUrl=$(page).jqmData("url");
+				if (dataUrl){
+					url=(	!this.conf.pushState &&
+						window.location.hash>0 ?
+							"#":""
+					) + dataUrl;
+				} else {
+					url=window.location.pathname+window.location.search;
+				}
 			}
+			if (url) url=url.replace(/^#\//,"/");
 			$.each(this.routes[e.type],function(route,handler){
 				var res, handleFn;
 				if ( (res=url.match(_self.routesRex[route])) ){

@@ -3,26 +3,55 @@
         <head> 
         <title>Page Title</title> 
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
-        <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript">
+		$(document).bind("mobileinit",function(){
+			$.mobile.jqmRouter={
+				supportHashParams: true,
+				reuseQueriedAjaxPages: true
+			};
+		});
+        </script>
+        <script type="text/javascript" src="../js/jqmrouter.js"></script>
+        <script type="text/javascript" src="http://jquerymobile.com/test/js/"></script>
+	<script type="text/javascript">
+		var router=new $.mobile.Router({
+			"testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s"},
+			"__subTestAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s"}
+		},{
+			ajaxPage: function(type,match,ui){
+				console.log("ajaxPage: "+type);
+				console.log(match);
+			}
+		});
+		setTimeout(function(){
+			alert("deactivating router...");
+			router.destroy();
+		},120000);
+	</script>
 </head>
 
 <body>
-<div data-role="page" data-add-back-btn="true">
 
+<div data-role="page">
         <div data-role="header">
-                <h1>Ajax Page header</h1>
+                <h1>Index</h1>
         </div>
 
         <div data-role="content">
-                <p>Ajax Page</p>
-		<p><a href="#" data-rel="back">Back to index</a></p>
+                <p>Index Page</p>
+		<p>
+                        <a href="__subTestAjax.html" data-params="true">Ajax Page</a><br/>
+                        <a href="__subTestAjax.html?foo=bar&bar=foo" data-params="true">Ajax Page with params v1</a><br/>
+                        <a href="__subTestAjax.html?/foo/bar/baz" data-params="true">Ajax Page with params v2</a><br/>
+                </p>
         </div>
 
         <div data-role="footer">
-                <h4>Ajax Page Footer</h4>
+                <h4>Index footer</h4>
         </div>
 </div>
+
 </body>
 
 </html>
