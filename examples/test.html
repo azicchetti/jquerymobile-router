@@ -17,7 +17,7 @@
 	<script type="text/javascript">
 		var router=new $.mobile.Router({
 			"#localpage2(?:[?/](.*))?": "localpage2",
-			"/localpage(?:[?/](.*))?": {handler: "localpage", events: "bc,c,bs,s"}
+			"/localpage(?:[?/](.*))?": {handler: "localpage", events: "bc,bs"}
 		},{
 			localpage: function(type,match,ui){
 				console.log("localpage: "+type);
@@ -28,6 +28,17 @@
 				console.log(match);
 			}
 		});
+		setTimeout(function(){
+			alert("adding a dynamic route to localpage3...");
+			router.add({
+				"#localpage3(?:[?/](.*))?": {handler: "localpage3", events: "s"}
+			},{
+				localpage3: function(type,match){
+					console.log("localpage3: "+type);
+					console.log(match);
+				}
+			});
+		},20000);
 		setTimeout(function(){
 			alert("deactivating router...");
 			router.destroy();
@@ -44,6 +55,7 @@
 
         <div data-role="content">
                 <p>Page 1</p>
+                <p>The output of this page can be seen in your javascript console.</p>
 		<p>
                         <a href="#localpage2?param=value&param2=value" data-params="true">#localpage2 with params v1 (classic)</a><br/>
                         <a href="#localpage2?foo=bar&bar=foo&foobarbaz" data-params="true">#localpage2 with params v2 (classic)</a><br/>
@@ -51,6 +63,8 @@
                         <a href="#/localpage/param/1/3" data-params="true">#localpage with params v1</a><br/>
                         <a href="#/localpage?foobarbaz" data-params="true">#localpage with params v2</a><br/>
                         <a href="#/localpage?foo=bar&bar=foo" data-params="true">#localpage with params v3</a><br/>
+			The following route will be enabled after 20seconds<br/>
+                        <a href="#localpage3?blablah" data-params="true">#localpage3 with params</a><br/>
                 </p>
         </div>
 
@@ -86,6 +100,21 @@
 
         <div data-role="footer">
                 <h4>Localpage 2 Footer</h4>
+        </div>
+</div>
+
+<div data-role="page" data-url="localpage3" data-add-back-btn="true">
+        <div data-role="header">
+                <h1>Localpage 3</h1>
+        </div>
+
+        <div data-role="content">
+                <p>This is the localpage 3 in the multipage template.</p>
+                <p><a href="#index">Back to index</a></p>
+        </div>
+
+        <div data-role="footer">
+                <h4>Localpage 3 Footer</h4>
         </div>
 </div>
 

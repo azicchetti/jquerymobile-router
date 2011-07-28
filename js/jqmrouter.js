@@ -120,60 +120,68 @@ $(document).bind("mobileinit",function(){
 				"regexp": { handler: function(){ ... }, events: "bc,c,bs,s,bh,h" }
 			}
 		*/
-		var routes={
+		this.routes={
 			pagebeforecreate: null, pagecreate: null,
 			pagebeforeshow: null, pageshow: null,
 			pagebeforehide: null, pagehide: null
-		}, routesRex={}, evtLookup={
-			bc: "pagebeforecreate", c: "pagecreate",
-			bs: "pagebeforeshow", s: "pageshow",
-			bh: "pagebeforehide", h: "pagehide"
 		};
-		userRoutes=userRoutes||{};
-		this.userHandlers=userHandlers||{};
+		this.routesRex={};
 		this.conf=$.extend({
 			pushState: false
 		}, conf || {});
-		$.each(userRoutes,function(r,el){
-			if(typeof(el)=="string" || typeof(el)=="function"){
-				if (routes.pagebeforeshow===null) routes.pagebeforeshow={};
-				routes.pagebeforeshow[r]=el;
-				if (! routesRex.hasOwnProperty(r)){
-					routesRex[r]=new RegExp(r);
-				}
-			} else {
-				var i,trig=el.events.split(","),evt;
-				for(i in trig){
-					evt=evtLookup[trig[i]];
-					if (routes.hasOwnProperty(evt)){
-						if (routes[evt]===null) routes[evt]={};
-						routes[evt][r]=el.handler;
-						if (! routesRex.hasOwnProperty(r)){
-							routesRex[r]=new RegExp(r);
-						}
-					} else {
-						debug("can't set unsupported route "+trig[i]);
-					}
-				}
-			}
-		});
-		var _self=this, evtList=[];
-		$.each(routes,function(evt,el){
-			if (el!==null){
-				evtList.push(evt);
-			}
-		});
-		this._liveData={
-			events: evtList.join(" "),
-			handler: function(e,ui){ _self._processRoutes(e,ui,this); }
-		};
-		$("div:jqmData(role='page'),div:jqmData(role='dialog')").live(
-			this._liveData.events, this._liveData.handler
-		);
-		this.routes=routes;
-		this.routesRex=routesRex;
+		this.add(userRoutes,userHandlers);
 	}
 	$.extend($.mobile.Router.prototype,{
+		add: function(userRoutes,userHandlers){
+			if (!userRoutes) return;
+
+			var _self=this, evtList=[], evtLookup={
+				bc: "pagebeforecreate", c: "pagecreate",
+				bs: "pagebeforeshow", s: "pageshow",
+				bh: "pagebeforehide", h: "pagehide"
+			};
+			$.each(userRoutes,function(r,el){
+				if(typeof(el)=="string" || typeof(el)=="function"){
+					if (_self.routes.pagebeforeshow===null) _self.routes.pagebeforeshow={};
+					_self.routes.pagebeforeshow[r]=el;
+					if (! _self.routesRex.hasOwnProperty(r)){
+						_self.routesRex[r]=new RegExp(r);
+					}
+				} else {
+					var i,trig=el.events.split(","),evt;
+					for(i in trig){
+						evt=evtLookup[trig[i]];
+						if (_self.routes.hasOwnProperty(evt)){
+							if (_self.routes[evt]===null) _self.routes[evt]={};
+							_self.routes[evt][r]=el.handler;
+							if (! _self.routesRex.hasOwnProperty(r)){
+								_self.routesRex[r]=new RegExp(r);
+							}
+						} else {
+							debug("can't set unsupported route "+trig[i]);
+						}
+					}
+				}
+			});
+			$.each(_self.routes,function(evt,el){
+				if (el!==null){
+					evtList.push(evt);
+				}
+			});
+			if (!this.userHandlers) this.userHandlers={};
+			$.extend(this.userHandlers,userHandlers||{});
+			this._detachEvents();
+			if (evtList.length>0){
+				this._liveData={
+					events: evtList.join(" "),
+					handler: function(e,ui){ _self._processRoutes(e,ui,this); }
+				};
+				$("div:jqmData(role='page'),div:jqmData(role='dialog')").live(
+					this._liveData.events, this._liveData.handler
+				);
+			}
+		},
+
 		_processRoutes: function(e,ui,page){
 			var 	_self=this,
 				url=( !this.conf.pushState ?
@@ -215,11 +223,17 @@ $(document).bind("mobileinit",function(){
 				}
 			});
 		},
+
+		_detachEvents: function(){
+			if (this._liveData){
+				$("div:jqmData(role='page'),div:jqmData(role='dialog')").die(
+					this._liveData.events, this._liveData.handler
+				);
+			}
+		} ,
 		
 		destroy: function(){
-			$("div:jqmData(role='page'),div:jqmData(role='dialog')").die(
-				this._liveData.events, this._liveData.handler
-			);
+			this._detachEvents();
 			this.routes=this.routesRex=null;
 		}
 	});

@@ -14,6 +14,9 @@ a scenario where you are rendering the pages dynamically on the client:
 
 The jQuery Mobile router javascript file must be loaded before jQuery Mobile.
 
+This plugin can be used alone or (better) with Backbone.js or Spine.js, because it's
+originally meant to replace their router with something integrated with jQM.
+
 
 
 
@@ -107,10 +110,11 @@ This is an example of a common myRoutes object:
 	}
 
 
-*****	PLEASE REMEMBER THAT CLIENT-SIDE PARAMETERS FOR LOCAL-PAGES MUST BE ENABLED	*****
-*****	USING THE JQM EXTENSIONS PROVIDED BY THIS PLUGIN.				*****
-*****	CLIENT-SIDE PARAMETERS FOR LOCAL PAGES ALSO FOLLOW A CERTAIN FORMAT: PLEASE	*****
-*****	READ THE FOLLOWING SECTION TO BETTER UNDERSTAND HOW THEY WORKS			*****
+*****	PLEASE REMEMBER THAT CLIENT-SIDE PARAMETERS FOR LOCAL-PAGES	   *****
+*****	MUST BE ENABLED	USING THE JQM EXTENSIONS PROVIDED BY THIS PLUGIN.  *****
+*****	CLIENT-SIDE PARAMETERS FOR LOCAL PAGES ALSO FOLLOW A CERTAIN	   *****
+*****	FORMAT: PLEASE READ THE FOLLOWING SECTION TO BETTER UNDERSTAND	   *****
+*****	HOW THEY WORKS							   *****
 
 
 
@@ -139,6 +143,21 @@ Your handlers will be called with the following arguments:
 	  the reference to either the next page (nextPage) or previous page (prevPage).
 	  More information here: http://jquerymobile.com/demos/1.0b1/docs/api/events.html
 	* page: the dom element that originated the jquery mobile page event
+
+
+
+--------------
+Public methods
+--------------
+
+Router objects have the following public methods:
+
+	add(myRoutes,myHandlers):
+			You can dynamically add routes on an already instantiated router.
+			The myRoutes and myHandlers objects were already described above.
+
+	destroy():
+			Unbind events and deactivate this router instance
 
 
 
