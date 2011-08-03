@@ -170,8 +170,7 @@ Have you ever wanted client-side parameters in the hash part of the url in jQuer
 Do you want to stop jQuery Mobile from fetching the same html file (because no server-side
 processing occours) when you change the querystring for that page?
 
-Well, these extensions may help you here, but at the moment they only work with the latest
-github build of jQM.
+Well, these extensions may help you here and they work with the latest jQM version (1.0b2).
 
 The extensions provided by jquerymobile-router must be configured in a classic jQM
 "mobileinit" event, before actually loading the jqmrouter javascript file.
@@ -205,7 +204,10 @@ The following options are supported:
 
 	* $.mobile.jqmRouter.reuseQueriedAjaxPages=true
 		Tells the framework to reuse already fetched ajax pages instead of
-		getting them each time the query string differs from the previous ones
+		getting them each time the query string differs from the previous ones.
+		You need to disable the jQM "auto cache management" for the ajax pages
+		you intend to use this feature with by declaring data-dom-cache="true"
+		in the page container (see the examples).
 
 	* $.mobile.jqmRouter.fixFirstPageDataUrl=true
 	* $.mobile.jqmRouter.firstPageDataUrl="index.html"

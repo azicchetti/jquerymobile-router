@@ -2,7 +2,7 @@
 <html>
         <head> 
         <title>Page Title</title> 
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
         <script type="text/javascript">
 		$(document).bind("mobileinit",function(){
@@ -13,7 +13,7 @@
 		});
         </script>
         <script type="text/javascript" src="../js/jqmrouter.js"></script>
-        <script type="text/javascript" src="http://jquerymobile.com/test/js/"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
 	<script type="text/javascript">
 		var router=new $.mobile.Router({
 			"testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s"},
@@ -43,8 +43,12 @@
                 <p>The output of this page can be seen in your javascript console.</p>
 		<p>
                         <a href="__subTestAjax.html" data-params="true">Ajax Page</a><br/>
-                        <a href="__subTestAjax.html?foo=bar&bar=foo" data-params="true">Ajax Page with params v1</a><br/>
-                        <a href="__subTestAjax.html?/foo/bar/baz" data-params="true">Ajax Page with params v2</a><br/>
+                        <a href="__subTestAjax.html?foo=bar&bar=foo" data-params="true">
+				Ajax Page with params v1
+			</a><br/>
+                        <a href="__subTestAjax.html?/foo/bar/baz" data-params="true">
+				Ajax Page with params v2
+			</a><br/>
                 </p>
         </div>
 

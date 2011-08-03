@@ -65,7 +65,7 @@ $(document).bind("mobileinit",function(){
 			res=href.match(qs), page=res[1]
 		;
 		$(':jqmData(url^="'+ page +'")').each(function(){
-			var dataUrlQS=$(this).attr("data-url").match(qs);
+			var dataUrlQS=$(this).jqmData("url").match(qs);
 			if (dataUrlQS[1]==page){
 				$(this).attr("data-url",res[0]).jqmData("url",res[0]);
 			}
