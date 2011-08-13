@@ -68,6 +68,17 @@ $(document).bind("mobileinit",function(){
 			var dataUrlQS=$(this).jqmData("url").match(qs);
 			if (dataUrlQS[1]==page){
 				$(this).attr("data-url",res[0]).jqmData("url",res[0]);
+				try {
+					if ($.mobile.activePage && this==$.mobile.activePage[0]){
+						var ui={ prevPage: $.mobile.activePage };
+						$.mobile.urlHistory.ignoreNextHashChange=true;
+						window.location.hash=res[0];
+						$.mobile.activePage
+							.trigger("pagebeforeshow",[ui])
+							.trigger("pageshow",[ui])
+						;
+					}
+				}catch(err){console.log(err);}
 			}
 		});
 	}
