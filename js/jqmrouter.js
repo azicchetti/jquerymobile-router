@@ -6,29 +6,6 @@
 $(document).bind("mobileinit",function(){
 
 	/* supports the following configurations:
-		
-		$.mobile.jqmRouter.supportHashParams=true
-			Anchors with parameters encoded into the hash will be accepted by
-			jquery mobile and the jqm router.
-			Hash parameters *MUST* have one of these formats:
-				#page?foo=bar&bar=foo
-				#/page?foo=bar&bar=foo
-				#/page/parameter/parameter2
-			When you define your page please remember to set the correct id or
-			data-url. For the example above they would be:
-				data-url="page"
-				data-url="/page"
-				data-url="/page"
-			Please remember that since we want bookmarkable urls, this plugin
-			also has to route the initial url. If pushState isn't used by jQM,
-			there's no way to tell whether a page is local or to be fetched via
-			ajax, so please, *DON'T USE PAGE IDs WITH THE SAME NAME OF DIRECTORIES
-			ON THE FILESYSTEM*
-
-		$.mobile.jqmRouter.reuseQueriedAjaxPages=true
-			Tells the framework to reuse already fetched ajax pages instead of
-			getting them each time the query string differs from the previous ones
-
 		$.mobile.jqmRouter.fixFirstPageDataUrl=true
 		$.mobile.jqmRouter.firstPageDataUrl="index.html"
 			jQM doesn't handle correctly the dataurl of the first page you display
@@ -39,16 +16,9 @@ $(document).bind("mobileinit",function(){
 			provide the name of the file containing the first page into the
 			"firstPageDataUrl" property (for example: index.html)
 
-		By default, the plugin handles only anchors with the data-params attribute defined.
-
-		*** supportHashParams and reuseQueriedAjaxPages only work with the latest github
-		version of jQM (with 1.0b1 they don't work) ***
-		
 	*/
 
 	var config=$.extend({
-		supportHashParams: false,
-		reuseQueriedAjaxPages: false,
 		fixFirstPageDataUrl: false, firstPageDataUrl: "index.html"
 	},$.mobile.jqmRouter || {});
 
@@ -58,42 +28,38 @@ $(document).bind("mobileinit",function(){
 		if (DEBUG) console.log(err);
 	}
 
-	function changePageDataUrl(href,isHash){
-		var	HASH_QUERY_STRING_RE=/(.+?)(?:[?\/](.*))?$/,
-			QUERY_STRING_RE=/(.+?)(?:[?](.*))?$/,
-			qs=isHash?HASH_QUERY_STRING_RE:QUERY_STRING_RE,
-			res=href.match(qs), page=res[1]
-		;
-		$(':jqmData(url^="'+ page +'")').each(function(){
-			var dataUrlQS=$(this).jqmData("url").match(qs);
-			if (dataUrlQS[1]==page){
-				$(this).attr("data-url",res[0]).jqmData("url",res[0]);
-			}
-		});
-	}
-	if (config.supportHashParams || config.reuseQueriedAjaxPages){
-		$("a[data-params]").live("click",function(e){
-			var 	PROTOCOL_HOST_RE=/(http?|ftp|file):\/\/[^\/]*/,
-				href
-			;
-			href=$(this).attr("href");
-			if (href.charAt(0)=="#"){
-				if (!config.supportHashParams || href.length<2) return;
-				changePageDataUrl(href.slice(1),true);
-			} else if (config.reuseQueriedAjaxPages){
-				href=this.href.replace(PROTOCOL_HOST_RE,"");
-				changePageDataUrl(href);
-			}
-		});
-		if (config.supportHashParams){
-			// we have to route the initial url
-			if (window.location.hash.length>1){
-				$(document).ready(function(){
-					changePageDataUrl(window.location.hash.slice(1),true);
-				});
+	var previousUrl=null, nextUrl=null;
+
+	$(document).bind("pagebeforechange", function( e, data ) {
+		// We only want to handle changePage() calls where the caller is
+		// asking us to load a page by URL.
+		if ( typeof data.toPage === "string" ) {
+			// We are being asked to load a page by URL, but we only
+			// want to handle URLs that request the data for a specific
+			// category.
+			var u = $.mobile.path.parseUrl( data.toPage );
+			previousUrl=nextUrl;
+			nextUrl=u;
+
+			if ( u.hash.indexOf("?") !== -1 ) {
+				var page=u.hash.replace( /\?.*$/, "" );
+				// We don't want the data-url of the page we just modified
+				// to be the url that shows up in the browser's location field,
+				// so set the dataUrl option to the URL for the category
+				// we just loaded.
+				data.options.dataUrl = u.href;
+				// Now call changePage() and tell it to switch to
+				// the page we just modified.
+				$.mobile.changePage( $(page), data.options );
+
+				// Make sure to tell changePage() we've handled this call so it doesn't
+				// have to do anything.
+				e.preventDefault();
 			}
 		}
-	}
+	});
+
+
 	if (config.fixFirstPageDataUrl){
 		$(document).ready(function(){
 			var page=$(":jqmData(role='page')").first();
@@ -128,7 +94,7 @@ $(document).bind("mobileinit",function(){
 		this.routesRex={};
 		this.conf=$.extend({
 			pushState: false
-		}, conf || {});
+		}, config || {});
 		this.add(userRoutes,userHandlers);
 	}
 	$.extend($.mobile.Router.prototype,{
@@ -183,31 +149,19 @@ $(document).bind("mobileinit",function(){
 		},
 
 		_processRoutes: function(e,ui,page){
-			var 	_self=this,
-				url=( !this.conf.pushState ?
-					window.location.hash
-					:window.location.pathname
-						+window.location.search
-						+window.location.hash
-				)
-			;
-			// when pagebeforecreate and pagecreate are fired, the url is still pointing
-			// to the previous page
-			if (!url || e.type in {
-				"pagebeforecreate":true, "pagecreate": true,
+			var 	_self=this, refUrl;
+			if (e.type in {
 				"pagebeforehide":true, "pagehide":true
 			}){
-				var dataUrl=$(page).jqmData("url");
-				if (dataUrl){
-					url=(	!this.conf.pushState &&
-						window.location.hash>0 ?
-							"#":""
-					) + dataUrl;
-				} else {
-					url=window.location.pathname+window.location.search;
-				}
+				refUrl=previousUrl;
+			} else {
+				refUrl=nextUrl || window.location;
 			}
-			if (url) url=url.replace(/^#\//,"/");
+			if (!refUrl) return;
+			url=( !this.conf.pushState ?
+				refUrl.hash	
+				:refUrl.pathname + refUrl.search + refUrl.hash
+			);
 			$.each(this.routes[e.type],function(route,handler){
 				var res, handleFn;
 				if ( (res=url.match(_self.routesRex[route])) ){
