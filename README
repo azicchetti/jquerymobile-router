@@ -6,17 +6,25 @@ jQuery Mobile router is a plugin for jQuery Mobile to enhance the framework
 with a client side router/controller that works with jQuery Mobile events
 (pagebeforecreate, pagecreate, pagebeforeshow, pageshow, pagebeforehide, pagehide).
 
-In addition, it extends jQM with a couple of useful things you may want to use in
-a scenario where you are rendering the pages dynamically on the client:
-	* support for client-side parameters in the hash part of the url (yay!!!)
-	* lets you re-use an already fetched ajax page instead of getting it from the
-	  server every time its querystring changes
+In addition, it extends jQM with a client-side parameters in the hash part of the url
+(yay!!!)
 
 The jQuery Mobile router javascript file must be loaded before jQuery Mobile.
 
 This plugin can be used alone or (better) with Backbone.js or Spine.js, because it's
 originally meant to replace their router with something integrated with jQM.
 
+
+=====================
+Upgrade notes
+=====================
+
+There's no need to use the data-params="true" anymore in your anchors since hash params
+are enabled by default.
+
+The reuseQueriedAjaxPages extension was removed since it wasn't so useful and
+a similar behaviour can be achieved with the new jquery mobile caching mechanism
+(but if you need it please mail me).
 
 
 
@@ -62,6 +70,10 @@ myRoutes supports the following formats:
 			"regularExpression": function(){
 				// your inline function here ...
 			}
+
+			/* or */
+			
+			"regularExpression": someobject.functionReference
 		}
 
 	* this is the full syntax to specify various jQM events you want your route to be
@@ -110,15 +122,6 @@ This is an example of a common myRoutes object:
 	}
 
 
-*****	PLEASE REMEMBER THAT CLIENT-SIDE PARAMETERS FOR LOCAL-PAGES	   *****
-*****	MUST BE ENABLED	USING THE JQM EXTENSIONS PROVIDED BY THIS PLUGIN.  *****
-*****	CLIENT-SIDE PARAMETERS FOR LOCAL PAGES ALSO FOLLOW A CERTAIN	   *****
-*****	FORMAT: PLEASE READ THE FOLLOWING SECTION TO BETTER UNDERSTAND	   *****
-*****	HOW THEY WORKS							   *****
-
-
-
-
 -----------------
 myHandlers object
 -----------------
@@ -163,80 +166,17 @@ Router objects have the following public methods:
 
 
 ==============
-jQM extensions
+Notes on jQM router
 ==============
 
 Have you ever wanted client-side parameters in the hash part of the url in jQuery Mobile?
-Do you want to stop jQuery Mobile from fetching the same html file (because no server-side
-processing occours) when you change the querystring for that page?
 
-Well, these extensions may help you here and they work with the latest jQM version (1.0b2).
+Well, jquery mobile router automatically enables this feature for you, using an official
+"hack"* provided in the jQM documentation.
 
-The extensions provided by jquerymobile-router must be configured in a classic jQM
-"mobileinit" event, before actually loading the jqmrouter javascript file.
-The following options are supported:
-		
-	* $.mobile.jqmRouter.supportHashParams=true
-		Anchors with parameters encoded into the hash will be accepted by
-		jquery mobile and the jqm router.
-		Hash parameters *MUST* have one of these formats:
-			#page?foo=bar&bar=foo
-			#/page?foo=bar&bar=foo
-			#/page/parameter/parameter2
-		When you define your page please remember to set the correct id or
-		data-url in the markup of the multipage template.
-		For the example above they would be:
-			data-url="page"
-			data-url="/page"
-			data-url="/page"
-
-		Please remember that since we want bookmarkable urls, this plugin
-		also has to route the initial url. If pushState isn't used by jQM,
-		there's no way to tell whether a page is local or to be fetched via
-		ajax, so please, *** DON'T USE PAGE IDs WITH THE SAME NAME OF DIRECTORIES
-		ON THE FILESYSTEM ***
-
-		NOTE:
-			When you use hash params for internal pages with the following
-			format: #/page...etc
-			the route regexp must not contain the initial "#".
-			So, "#/page" won't match but "/page" will.
-
-	* $.mobile.jqmRouter.reuseQueriedAjaxPages=true
-		Tells the framework to reuse already fetched ajax pages instead of
-		getting them each time the query string differs from the previous ones.
-		You need to disable the jQM "auto cache management" for the ajax pages
-		you intend to use this feature with by declaring data-dom-cache="true"
-		in the page container (see the examples).
-
-	* $.mobile.jqmRouter.fixFirstPageDataUrl=true
-	* $.mobile.jqmRouter.firstPageDataUrl="index.html"
-		jQM doesn't handle correctly the dataurl of the first page you display
-		in a single-page template mode. In fact, the page is fetched again
-		from the server the first time you try to access it through a link.
-		If this option is set to true, jquery mobile router extensions will
-		try to fix this problem. In order to set the data url, you have to
-		provide the name of the file containing the first page into the
-		"firstPageDataUrl" property (for example: index.html)
-
-
-*** The plugin will only process links (anchors) defining the following attribute ***
-*** in the html markup (because I don't want to mess with normal buttons):	  ***
-
-	data-params="true"
-
-
-For example:
-	<a href="#/localpage/param/1/3" data-params="true">#localpage with params v1</a>
-        <a href="#/localpage?foobarbaz" data-params="true">#localpage with params v2</a>
-        <a href="#/localpage?foo=bar&bar=foo" data-params="true">#localpage with params v3</a>
-
-Please remember that if you're in a multipage template, you've to setup the id or (better) the
-data-url of the local dynamic page you want to use with client-side parameters.
-
-For the above examples...
-
-	<div data-role="page" data-url="/localpage">...</div>
+* This hack isn't quite different from the one previously used by this plugin. But since
+there's something 'official', we'll be guaranteed that our code will be supported in future
+releases and I'm extremely happy about this.
 
 
 For bugs, comments, patches and requests mail me!
