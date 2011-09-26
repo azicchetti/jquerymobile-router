@@ -49,8 +49,19 @@ $(document).bind("mobileinit",function(){
 				// we just loaded.
 				data.options.dataUrl = u.href;
 				// Now call changePage() and tell it to switch to
-				// the page we just modified.
-				$.mobile.changePage( $(page), data.options );
+				// the page we just modified, but only in case it's different
+				// from the current page
+				if (	$.mobile.activePage &&
+					page.replace(/^#/,"")==$.mobile.activePage.jqmData("url")
+				){
+					var ui={ prevPage: $.mobile.activePage };
+					$.mobile.activePage
+						.trigger("pagebeforeshow",[ui])
+						.trigger("pageshow",[ui])
+					;
+				} else {
+					$.mobile.changePage( $(page), data.options );
+				}
 
 				// Make sure to tell changePage() we've handled this call so it doesn't
 				// have to do anything.
