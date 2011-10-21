@@ -1,4 +1,4 @@
-/* jQueryMobile-router v0.3
+/* jQueryMobile-router v0.4
  * Copyright 2011, Andrea Zicchetti
  */
 (function($){
