@@ -14,6 +14,15 @@ The jQuery Mobile router javascript file must be loaded before jQuery Mobile.
 This plugin can be used alone or (better) with Backbone.js or Spine.js, because it's
 originally meant to replace their router with something integrated with jQM.
 
+=====================
+What's new in the latest versions
+=====================
+* Added a nice getParams() function to actually 'parse' parameters in the hash and get
+a simple object to play with them.
+* Support for the pageinit event.
+* Bugfixes to support events for the first displayed page.
+
+
 
 =====================
 Upgrade notes
