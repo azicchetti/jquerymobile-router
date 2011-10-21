@@ -19,12 +19,17 @@ originally meant to replace their router with something integrated with jQM.
 Upgrade notes
 =====================
 
-There's no need to use the data-params="true" anymore in your anchors since hash params
-are enabled by default.
+0.3 to 0.4
+	The main javascript file has been renamed to jquery.mobile.router.js
 
-The reuseQueriedAjaxPages extension was removed since it wasn't so useful and
-a similar behaviour can be achieved with the new jquery mobile caching mechanism
-(but if you need it please mail me).
+
+0.2 to 0.3
+	There's no need to use the data-params="true" anymore in your anchors since hash params
+	are enabled by default.
+
+	The reuseQueriedAjaxPages extension was removed since it wasn't so useful and
+	a similar behaviour can be achieved with the new jquery mobile caching mechanism
+	(but if you need it please mail me).
 
 
 
@@ -49,8 +54,7 @@ var approuter=new $.mobile.Router(myRoutes, myHandlers, options);
 
 	* myRoutes is an object defining your routes
 	* myHandlers is an object with your function handlers
-	* options is an object with a certain configuration (not really used at this time)
-
+	* options is an object with a certain configuration (see below)
 
 
 
@@ -103,6 +107,7 @@ myRoutes supports the following formats:
 
 		bc	=> pagebeforecreate
 		c	=> pagecreate
+		i	=> pageinit
 		bs	=> pagebeforeshow
 		s	=> pageshow
 		bh	=> pagebeforehide
@@ -112,7 +117,7 @@ myRoutes supports the following formats:
 This is an example of a common myRoutes object:
 
 	{
-		"#/localpage(?:[?/](.*))?": {
+		"#localpage(?:[?/](.*))?": {
 			handler: "localpage", events: "bs,bh"
 		},
 
@@ -162,7 +167,39 @@ Router objects have the following public methods:
 	destroy():
 			Unbind events and deactivate this router instance
 
+	getParams(hashPartOfTheUrl):
+			Returns an object with the parameters encoded in the url or null
+			if nothing's found.
+			For instance, if you have something like:
+				#detail?id=3&foo=bar
+			and call routerInstance.getParams("?id=3&foo=bar")
+			you'll get:
+				{
+					id: "3",
+					foor: "bar"
+				}
 
+			There's an example under examples/backbone-example !
+
+
+
+==============
+jQM Configuration
+==============
+jQuery Mobile Router supports the following parameters:
+
+	ajaxApp: tells the plugin to use the full page path for its matches instead of
+		 the hash part of the url
+
+
+You can pass an object with the above properties to the single router instance or set it
+globally with this code (must be used BEFORE loading jquery.mobile.router.js):
+
+	$(document).bind("mobileinit",function(){
+		$.mobile.jqmRouter={
+			ajaxApp: true
+		};
+	});
 
 
 ==============
