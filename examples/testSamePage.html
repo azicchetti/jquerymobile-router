@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
-        <head> 
-        <title>Page Title</title> 
+        <head>
+        <title>Page Title</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
         <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc1/jquery.mobile-1.0rc1.min.js"></script>
-	<script type="text/javascript">
-		var router=new $.mobile.Router({
-			"#localpage2(?:[?/](.*))?": "localpage2",
-		},{
-			localpage2: function(type,match,ui){
-				console.log("localpage2: "+type);
-				console.log(match);
-			}
-		});
-	</script>
+        <script type="text/javascript">
+            var router=new $.mobile.Router({
+                "#localpage2(?:[?/](.*))?": "localpage2",
+            },{
+                localpage2: function(type,match,ui){
+                    console.log("localpage2: "+type);
+                    console.log(match);
+                }
+            });
+        </script>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
         <div data-role="content">
                 <p>Page 1</p>
                 <p>The output of this page can be seen in your javascript console. Please go to localpage2.</p>
-		<p>
+                <p>
                         <a href="#localpage2?param=value&param2=value">#localpage2 (this one contains the demo)</a><br/>
                 </p>
         </div>
@@ -46,8 +46,8 @@
         <div data-role="content">
                 <p>This is the localpage 2 in the multipage template.</p>
                 <p><a href="#index">Back to index</a></p>
-		<a href="#localpage2?param=value2&param2=value2">#localpage2 with params v1 (self)</a><br/>
-		<a href="#localpage2?foo=bar&bar=foo&foobarbaz2">#localpage2 with params v2 (self)</a><br/>
+        <a href="#localpage2?param=value2&param2=value2">#localpage2 with params v1 (self)</a><br/>
+        <a href="#localpage2?foo=bar&bar=foo&foobarbaz2">#localpage2 with params v2 (self)</a><br/>
         </div>
 
         <div data-role="footer">
@@ -58,4 +58,3 @@
 </body>
 
 </html>
-

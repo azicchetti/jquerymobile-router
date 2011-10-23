@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html>
-        <head> 
-        <title>Page Title</title> 
+        <head>
+        <title>Page Title</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
-	<script type="text/javascript">
-		$(document).bind("mobileinit",function(){
-			$.mobile.jqmRouter={
-				ajaxApp: true
-			};
-		});
-	</script>
-        <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
-        <script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
-	<script type="text/javascript">
-		var router=new $.mobile.Router({
-			"/testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s,h"},
-			"/__subTestAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h"}
-		},{
-			ajaxPage: function(type,match,ui){
-				console.log("ajaxPage: "+type);
-				console.log(match);
-			}
-		});
-		setTimeout(function(){
-			alert("deactivating router...");
-			router.destroy();
-		},120000);
-	</script>
+        <script type="text/javascript">
+          $(document).bind("mobileinit",function(){
+            $.mobile.jqmRouter={
+              ajaxApp: true
+            };
+          });
+        </script>
+              <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
+              <script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
+        <script type="text/javascript">
+          var router=new $.mobile.Router({
+            "/testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s,h"},
+            "/__subTestAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h"}
+          },{
+            ajaxPage: function(type,match,ui){
+              console.log("ajaxPage: "+type);
+              console.log(match);
+            }
+          });
+          setTimeout(function(){
+            alert("deactivating router...");
+            router.destroy();
+          },120000);
+        </script>
 </head>
 
 <body>
@@ -40,11 +40,11 @@
         <div data-role="content">
                 <p>Index Page</p>
                 <p>The output of this page can be seen in your javascript console.</p>
-		<p>
+                <p>
                         <a href="__subTestAjax.html">Ajax Page</a><br/>
                         <a href="__subTestAjax.html?foo=bar&bar=foo">
-				Ajax Page with params v1
-			</a><br/>
+                                Ajax Page with params v1
+                        </a><br/>
                 </p>
         </div>
 
@@ -56,4 +56,3 @@
 </body>
 
 </html>
-
