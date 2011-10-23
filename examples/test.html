@@ -1,39 +1,39 @@
 <!DOCTYPE html>
 <html>
-        <head> 
-        <title>Page Title</title> 
+        <head>
+        <title>Page Title</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
         <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
-	<script type="text/javascript">
-		var router=new $.mobile.Router({
-			"#localpage2(?:[?/](.*))?": {handler: "localpage", events: "bc,c,i,bs,s,bh,h"},
-			"#index": { handler: function(type){
-				console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
-			}, events: "h,s" }
-		},{
-			localpage: function(type,match,ui){
-				console.log("localpage2: "+type);
-				console.log(match);
-			}
-		});
-		setTimeout(function(){
-			alert("adding a dynamic route to localpage3...");
-			router.add({
-				"#localpage3(?:[?/](.*))?": {handler: "localpage3", events: "s"}
-			},{
-				localpage3: function(type,match){
-					console.log("localpage3: "+type);
-					console.log(match);
-				}
-			});
-		},20000);
-		setTimeout(function(){
-			alert("deactivating router...");
-			router.destroy();
-		},120000);
-	</script>
+        <script type="text/javascript">
+            var router=new $.mobile.Router({
+                "#localpage2(?:[?/](.*))?": {handler: "localpage", events: "bc,c,i,bs,s,bh,h"},
+                "#index": { handler: function(type){
+                    console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
+                }, events: "h,s" }
+            },{
+                localpage: function(type,match,ui){
+                    console.log("localpage2: "+type);
+                    console.log(match);
+                }
+            });
+            setTimeout(function(){
+                alert("adding a dynamic route to localpage3...");
+                router.add({
+                    "#localpage3(?:[?/](.*))?": {handler: "localpage3", events: "s"}
+                },{
+                    localpage3: function(type,match){
+                        console.log("localpage3: "+type);
+                        console.log(match);
+                    }
+                });
+            },20000);
+            setTimeout(function(){
+                alert("deactivating router...");
+                router.destroy();
+            },120000);
+        </script>
 </head>
 
 <body>
@@ -46,10 +46,10 @@
         <div data-role="content">
                 <p>Page 1</p>
                 <p>The output of this page can be seen in your javascript console.</p>
-		<p>
+                <p>
                         <a href="#localpage2?param=value&param2=value">#localpage2 with params v1 (classic)</a><br/>
                         <a href="#localpage2?foo=bar&bar=foo&foobarbaz">#localpage2 with params v2 (classic)</a><br/>
-			The following route will be enabled after 20seconds<br/>
+                        The following route will be enabled after 20seconds<br/>
                         <a href="#localpage3?blablah">#localpage3 with params</a><br/>
                 </p>
         </div>
@@ -93,4 +93,3 @@
 </body>
 
 </html>
-

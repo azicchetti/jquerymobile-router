@@ -181,7 +181,7 @@ $(document).bind("mobileinit",function(){
 			}
 			if (!refUrl) return;
 			url=( !this.conf.ajaxApp ?
-				refUrl.hash	
+				refUrl.hash
 				:refUrl.pathname + refUrl.search + refUrl.hash
 			);
 			$.each(this.routes[e.type],function(route,handler){
@@ -207,7 +207,7 @@ $(document).bind("mobileinit",function(){
 				);
 			}
 		} ,
-		
+
 		destroy: function(){
 			this._detachEvents();
 			this.routes=this.routesRex=null;
