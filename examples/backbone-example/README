@@ -1,3 +1,15 @@
+This example shows a typical usage of parameters in the hash part of the url
+in order to render a detail page in jQuery Mobile.
+
+Backbone's hash router is replaced by jquerymobile-router.
+
+The example also shows the usage of regular expressions and Deferred
+objects in order to support straight links to the detail page.
+This is really useful if you're planning to use client-side rendering techinques
+in mobile websites.
+
+---------------------------------------------------------------------------------
+
 Esempio di rendering di un dettaglio tramite una pagina jQuery Mobile dedicata
 ed il passaggio di parametri nella parte hash dell'url.
 

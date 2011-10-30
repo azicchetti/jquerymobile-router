@@ -45,8 +45,7 @@ $(document).bind("mobileinit",function(){
 				var page=u.hash.replace( /\?.*$/, "" );
 				// We don't want the data-url of the page we just modified
 				// to be the url that shows up in the browser's location field,
-				// so set the dataUrl option to the URL for the category
-				// we just loaded.
+				// so set the dataUrl option to the URL with hash parameters
 				data.options.dataUrl = u.href;
 				// Now call changePage() and tell it to switch to
 				// the page we just modified, but only in case it's different
@@ -54,11 +53,8 @@ $(document).bind("mobileinit",function(){
 				if (	$.mobile.activePage &&
 					page.replace(/^#/,"")==$.mobile.activePage.jqmData("url")
 				){
-					var ui={ prevPage: $.mobile.activePage };
-					$.mobile.activePage
-						.trigger("pagebeforeshow",[ui])
-						.trigger("pageshow",[ui])
-					;
+					data.options.allowSamePageTransition=true;
+					$.mobile.changePage( $(page), data.options );
 				} else {
 					$.mobile.changePage( $(page), data.options );
 				}
