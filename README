@@ -17,6 +17,7 @@ originally meant to replace their router with something integrated with jQM.
 =====================
 What's new in the latest versions
 =====================
+* Support for a different syntax defining your routes
 * Added a nice getParams() function to actually 'parse' parameters in the hash and get
 a simple object to play with them.
 * Support for the pageinit event.
@@ -27,7 +28,6 @@ a simple object to play with them.
 =====================
 Upgrade notes
 =====================
-
 0.3 to 0.4
 	The main javascript file has been renamed to jquery.mobile.router.js
 
@@ -61,7 +61,7 @@ with the following arguments:
 
 var approuter=new $.mobile.Router(myRoutes, myHandlers, options);
 
-	* myRoutes is an object defining your routes
+	* myRoutes is an object or an array defining your routes
 	* myHandlers is an object with your function handlers
 	* options is an object with a certain configuration (see below)
 
@@ -71,6 +71,8 @@ var approuter=new $.mobile.Router(myRoutes, myHandlers, options);
 myRoutes object
 ---------------
 myRoutes supports the following formats:
+
+--- 1)
 	* this one binds a certain route to the pagebeforeshow event and calls the handler,
 	  which can be an inline function or a function name (a string) that must be defined
 	  in the myHandlers object
@@ -122,8 +124,29 @@ myRoutes supports the following formats:
 		bh	=> pagebeforehide
 		h	=> pagehide
 
+--- 2)
+	* The above syntax, however, doesn't let one use the same regular expression to call
+	  different handlers (this is due to the fact that the regexp is a key into an hashmap,
+	  so it must be unique). If you need, for instance, to call the function "foo" when a
+	  certain page has been shown, and the function "bar" when the same page has been hidden,
+	  you could use the following syntax:
+
+
+		var approuter=new $.mobile.Router([
+			{ "#certainPage": { handler: "foo", events: "s" } },
+			{ "#certainPage": { handler: "bar", events: "h" } }
+		], {
+			foo: function(...){...},
+			bar: function(...){...}
+		}, options);
+
+	  By using an array, you can specify the SAME REGULAR EXPRESSION multiple times, but for
+	  DIFFERENT EVENT TYPES.
+
 
 This is an example of a common myRoutes object:
+
+Syntax 1)
 
 	{
 		"#localpage(?:[?/](.*))?": {
@@ -134,6 +157,15 @@ This is an example of a common myRoutes object:
 			handler: "ajaxPage", events: "c,bs"
 		}
 	}
+
+
+and syntax 2)
+
+	[
+		{ "#localpage(?:[?/](.*))?": { handler: "localpage", events: "bs,bh" } },
+
+		{ "ajaxPage.html(?:[?](.*))?": { handler: "ajaxPage", events: "c,bs" } }
+	]
 
 
 -----------------
@@ -185,7 +217,7 @@ Router objects have the following public methods:
 			you'll get:
 				{
 					id: "3",
-					foor: "bar"
+					foo: "bar"
 				}
 
 			There's an example under examples/backbone-example !

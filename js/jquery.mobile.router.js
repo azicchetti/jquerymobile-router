@@ -1,4 +1,4 @@
-/* jQueryMobile-router v0.4
+/* jQueryMobile-router v0.5
  * Copyright 2011, Andrea Zicchetti
  */
 (function($){
@@ -114,45 +114,55 @@ $(document).bind("mobileinit",function(){
 				bh: "pagebeforehide", h: "pagehide",
 				i: "pageinit"
 			};
-			$.each(userRoutes,function(r,el){
-				if(typeof(el)=="string" || typeof(el)=="function"){
-					if (_self.routes.pagebeforeshow===null) _self.routes.pagebeforeshow={};
-					_self.routes.pagebeforeshow[r]=el;
-					if (! _self.routesRex.hasOwnProperty(r)){
-						_self.routesRex[r]=new RegExp(r);
-					}
-				} else {
-					var i,trig=el.events.split(","),evt;
-					for(i in trig){
-						evt=evtLookup[trig[i]];
-						if (_self.routes.hasOwnProperty(evt)){
-							if (_self.routes[evt]===null) _self.routes[evt]={};
-							_self.routes[evt][r]=el.handler;
-							if (! _self.routesRex.hasOwnProperty(r)){
-								_self.routesRex[r]=new RegExp(r);
+			if (userRoutes instanceof Array){
+				$.each(userRoutes,$.proxy(function(k,v){
+					this.add(v,userHandlers);
+				},this));
+			} else {
+				$.each(userRoutes,function(r,el){
+					if(typeof(el)=="string" || typeof(el)=="function"){
+						if (_self.routes.pagebeforeshow===null){
+							_self.routes.pagebeforeshow={};
+						}
+						_self.routes.pagebeforeshow[r]=el;
+						if (! _self.routesRex.hasOwnProperty(r)){
+							_self.routesRex[r]=new RegExp(r);
+						}
+					} else {
+						var i,trig=el.events.split(","),evt;
+						for(i in trig){
+							evt=evtLookup[trig[i]];
+							if (_self.routes.hasOwnProperty(evt)){
+								if (_self.routes[evt]===null){
+									_self.routes[evt]={};
+								}
+								_self.routes[evt][r]=el.handler;
+								if (! _self.routesRex.hasOwnProperty(r)){
+									_self.routesRex[r]=new RegExp(r);
+								}
+							} else {
+								debug("can't set unsupported route "+trig[i]);
 							}
-						} else {
-							debug("can't set unsupported route "+trig[i]);
 						}
 					}
+				});
+				$.each(_self.routes,function(evt,el){
+					if (el!==null){
+						evtList.push(evt);
+					}
+				});
+				if (!this.userHandlers) this.userHandlers={};
+				$.extend(this.userHandlers,userHandlers||{});
+				this._detachEvents();
+				if (evtList.length>0){
+					this._liveData={
+						events: evtList.join(" "),
+						handler: function(e,ui){ _self._processRoutes(e,ui,this); }
+					};
+					$("div:jqmData(role='page'),div:jqmData(role='dialog')").live(
+						this._liveData.events, this._liveData.handler
+					);
 				}
-			});
-			$.each(_self.routes,function(evt,el){
-				if (el!==null){
-					evtList.push(evt);
-				}
-			});
-			if (!this.userHandlers) this.userHandlers={};
-			$.extend(this.userHandlers,userHandlers||{});
-			this._detachEvents();
-			if (evtList.length>0){
-				this._liveData={
-					events: evtList.join(" "),
-					handler: function(e,ui){ _self._processRoutes(e,ui,this); }
-				};
-				$("div:jqmData(role='page'),div:jqmData(role='dialog')").live(
-					this._liveData.events, this._liveData.handler
-				);
 			}
 		},
 
