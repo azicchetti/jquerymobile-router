@@ -16,7 +16,8 @@
         <script type="text/javascript">
           var router=new $.mobile.Router({
             "/testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s,h"},
-            "/__subTestAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h"}
+            "/__subTestAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h"},
+            "/__subTestAjax3.html": {handler: "ajaxPage", events: "rm"}
           },{
             ajaxPage: function(type,match,ui){
               console.log("ajaxPage: "+type);

@@ -96,7 +96,7 @@ $(document).bind("mobileinit",function(){
 			pagebeforecreate: null, pagecreate: null,
 			pagebeforeshow: null, pageshow: null,
 			pagebeforehide: null, pagehide: null,
-			pageinit: null
+			pageinit: null, pageremove: null
 		};
 		this.routesRex={};
 		this.conf=$.extend({
@@ -112,7 +112,7 @@ $(document).bind("mobileinit",function(){
 				bc: "pagebeforecreate", c: "pagecreate",
 				bs: "pagebeforeshow", s: "pageshow",
 				bh: "pagebeforehide", h: "pagehide",
-				i: "pageinit"
+				i: "pageinit", rm: "pageremove"
 			};
 			if (userRoutes instanceof Array){
 				$.each(userRoutes,$.proxy(function(k,v){
@@ -169,7 +169,7 @@ $(document).bind("mobileinit",function(){
 		_processRoutes: function(e,ui,page){
 			var _self=this, refUrl, url;
 			if (e.type in {
-				"pagebeforehide":true, "pagehide":true
+				"pagebeforehide":true, "pagehide":true, "pageremove": true
 			}){
 				refUrl=previousUrl;
 			} else {
