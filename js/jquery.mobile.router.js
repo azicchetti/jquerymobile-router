@@ -70,12 +70,14 @@ $(document).bind("mobileinit",function(){
 		$(document).ready(function(){
 			var page=$(":jqmData(role='page')").first();
 			var	dataUrl=page.jqmData("url"),
-				guessedDataUrl=
-					window.location.pathname.slice(-1)=="/"?
-						window.location.pathname
-						+config.firstPageDataUrl
-						:window.location.pathname
+				guessedDataUrl=window.location.pathname
+					+config.firstPageDataUrl
+					+window.location.search
+					+window.location.hash
 			;
+			if (!window.location.pathname.match("/$")){
+				return;
+			}
 			if (dataUrl!=guessedDataUrl){
 				page.attr("data-url",guessedDataUrl)
 					.jqmData("url",guessedDataUrl);
@@ -167,7 +169,7 @@ $(document).bind("mobileinit",function(){
 		},
 
 		_processRoutes: function(e,ui,page){
-			var _self=this, refUrl, url;
+			var _self=this, refUrl, url, $page;
 			if (e.type in {
 				"pagebeforehide":true, "pagehide":true, "pageremove": true
 			}){
@@ -175,12 +177,14 @@ $(document).bind("mobileinit",function(){
 			} else {
 				refUrl=nextUrl;
 			}
-			if (!refUrl && page){
-				$page=$(page);
-				refUrl=$page.jqmData("url");
-				if (refUrl){
-					if ($page.attr("id")==refUrl) refUrl="#"+refUrl;
-					refUrl=$.mobile.path.parseUrl(refUrl);
+			if (!refUrl){
+				if (page){
+					$page=$(page);
+					refUrl=$page.jqmData("url");
+					if (refUrl){
+						if ($page.attr("id")==refUrl) refUrl="#"+refUrl;
+						refUrl=$.mobile.path.parseUrl(refUrl);
+					}
 				} else {
 					refUrl=window.location;
 				}
@@ -225,7 +229,14 @@ $(document).bind("mobileinit",function(){
 			var tokens=hashparams.slice( hashparams.indexOf('?')+1 ).split("&");
 			$.each(tokens,function(k,v){
 				tmp=v.split("=");
-				params[tmp[0]]=tmp[1];
+				if (params[tmp[0]]){
+					if (!(params[tmp[0]] instanceof Array)){
+						params[tmp[0]]=[ params[tmp[0]] ];
+					}
+					params[tmp[0]].push(tmp[1]);
+				} else {
+					params[tmp[0]]=tmp[1];
+				}
 			});
 			if ($.isEmptyObject(params)) return null;
 			return params;
