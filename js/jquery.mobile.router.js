@@ -185,9 +185,9 @@ $(document).bind("mobileinit",function(){
 						if ($page.attr("id")==refUrl) refUrl="#"+refUrl;
 						refUrl=$.mobile.path.parseUrl(refUrl);
 					}
-				} else {
-					refUrl=window.location;
 				}
+			} else if (page && !$(page).jqmData("url")){
+				return;
 			}
 			if (!refUrl) return;
 			url=( !this.conf.ajaxApp ?
