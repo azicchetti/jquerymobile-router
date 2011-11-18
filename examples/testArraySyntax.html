@@ -31,7 +31,12 @@
 			console.log("localpage function C: "+type);
 			console.log(params);
                 }
-	});
+	},{ 
+        defaultHandler: function(type, ui, page) {
+            console.log("Default handler called due to unknown route (" + type + ", " + ui + ", " + page + ")");
+        },
+        defaultHandlerEvents: "s"
+    });
         setTimeout(function(){
         	alert("adding a dynamic route to localpage3...");
 		router.add([
