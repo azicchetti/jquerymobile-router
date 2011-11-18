@@ -23,7 +23,12 @@
               console.log("ajaxPage: "+type);
               console.log(match);
             }
-          });
+          }, { 
+            defaultHandler: function(type, ui, page) {
+                console.log("Default handler called due to unknown route (" + type + ", " + ui + ", " + page + ")");
+            },
+            defaultHandlerEvents: "s"
+        });
           setTimeout(function(){
             alert("deactivating router...");
             router.destroy();

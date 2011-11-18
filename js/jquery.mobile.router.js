@@ -100,22 +100,30 @@ $(document).bind("mobileinit",function(){
 			pagebeforehide: null, pagehide: null,
 			pageinit: null, pageremove: null
 		};
+        this.evtLookup = {
+            bc: "pagebeforecreate", c: "pagecreate",
+            bs: "pagebeforeshow", s: "pageshow",
+            bh: "pagebeforehide", h: "pagehide",
+            i: "pageinit", rm: "pageremove"
+        };
 		this.routesRex={};
 		this.conf=$.extend({
 			ajaxApp: false
-		}, config || {});
+		}, conf || {});
+        this.defaultHandlerEvents = {};
+        if (this.conf.defaultHandlerEvents) {
+            var evts = this.conf.defaultHandlerEvents.split(",");
+            for (var i = 0; i < evts.length; i++) {
+                this.defaultHandlerEvents[this.evtLookup[evts[i]]] = evts[i];
+            }
+        }
 		this.add(userRoutes,userHandlers);
 	}
 	$.extend($.mobile.Router.prototype,{
 		add: function(userRoutes,userHandlers){
 			if (!userRoutes) return;
 
-			var _self=this, evtList=[], evtLookup={
-				bc: "pagebeforecreate", c: "pagecreate",
-				bs: "pagebeforeshow", s: "pageshow",
-				bh: "pagebeforehide", h: "pagehide",
-				i: "pageinit", rm: "pageremove"
-			};
+			var _self=this, evtList=[];
 			if (userRoutes instanceof Array){
 				$.each(userRoutes,$.proxy(function(k,v){
 					this.add(v,userHandlers);
@@ -133,7 +141,7 @@ $(document).bind("mobileinit",function(){
 					} else {
 						var i,trig=el.events.split(","),evt;
 						for(i in trig){
-							evt=evtLookup[trig[i]];
+							evt=_self.evtLookup[trig[i]];
 							if (_self.routes.hasOwnProperty(evt)){
 								if (_self.routes[evt]===null){
 									_self.routes[evt]={};
@@ -194,6 +202,7 @@ $(document).bind("mobileinit",function(){
 				refUrl.hash
 				:refUrl.pathname + refUrl.search + refUrl.hash
 			);
+            var bHandled = false;
 			$.each(this.routes[e.type],function(route,handler){
 				var res, handleFn;
 				if ( (res=url.match(_self.routesRex[route])) ){
@@ -203,11 +212,19 @@ $(document).bind("mobileinit",function(){
 						handleFn=_self.userHandlers[handler];
 					}
 					if (handleFn){
-						try { handleFn(e.type,res,ui,page);
+						try { handleFn(e.type,res,ui,page); bHandled = true;
 						}catch(err){ debug(err); }
 					}
 				}
 			});
+            //Pass to default if specified and can handle this event type
+            if (!bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type]) {
+                if (typeof(this.conf.defaultHandler) == "function") {
+                    try {
+                        this.conf.defaultHandler(e.type, ui, page);
+                    } catch(err) { debug(err); }
+                }
+            }
 		},
 
 		_detachEvents: function(){
