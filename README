@@ -4,7 +4,8 @@
 
 jQuery Mobile router is a plugin for jQuery Mobile to enhance the framework
 with a client side router/controller that works with jQuery Mobile events
-(pagebeforecreate, pagecreate, pagebeforeshow, pageshow, pagebeforehide, pagehide).
+(pagebeforecreate, pagecreate, pagebeforeshow, pageshow, pagebeforehide, pagehide,
+pageremove).
 
 In addition, it extends jQM with a client-side parameters in the hash part of the url
 (yay!!!)
@@ -22,15 +23,19 @@ What's new in the latest versions
 a simple object to play with them.
 * Support for the pageinit event.
 * Bugfixes to support events for the first displayed page.
+* Default handler support
 
 
 
 =====================
 Upgrade notes
 =====================
+0.5 to 0.6
+	You can define a default handler in the "conf" object. This will be called when
+	no matching routes are found in the set you've provided
+
 0.3 to 0.4
 	The main javascript file has been renamed to jquery.mobile.router.js
-
 
 0.2 to 0.3
 	There's no need to use the data-params="true" anymore in your anchors since hash params
@@ -65,6 +70,39 @@ var approuter=new $.mobile.Router(myRoutes, myHandlers, options);
 	* myHandlers is an object with your function handlers
 	* options is an object with a certain configuration (see below)
 
+
+Here are a few examples:
+
+var router=new $.mobile.Router([
+        { "/index.html": { events: "i", handler: "index" } },
+        { "/events.html(?:[?](.*))?": { events: "i", handler: "events" } },
+        { "/eventDetail.html(?:[?](.*))?": { events: "i", handler: "eventDetail" } },
+        { "/accomodations.html(?:[?](.*))?": { events: "i", handler: "accomodationsTaxonomy" } },
+        { "/accomodationList.html(?:[?](.*))?": { events: "i", handler: "accomodations" } }
+], ControllerObject, { ajaxApp: true} );
+
+var router=new $.mobile.Router([
+        { "#ticketPlanner([?].*)?": "ticketPlannerShown" },
+        { "#ticketConfirm": "ticketConfirmShown" },
+        { "#ticketDetail([?].*)?": { handler: "ticketDetailPage", events: "bs,h" } },
+        { "#ticketHistory": "ticketHistoryShown" },
+        { "#map": { handler: "mapHidden", events: "bh" } },
+        { "#map": { handler: "mapShown", events: "s" } }
+], ControllerObject);
+
+
+----- IMPORTANT (no kidding!) -----
+
+	* By default, the router will match the routes against the hash part of the url.
+	  If you need the FULL PATH (pathname+search+hash), please set the "ajaxApp" configuration
+	  parameter to TRUE (see below)
+
+	* If you're using a multipage template in your jquerymobile application, the first displayed
+	  page is quite an "anomaly" in the navigation model, because, even if it has its own id, this
+	  is not reflected in the hash. This doesn't happen for other pages. This "empty hash" problem
+	  may come into play when the back button is used by the user.
+	  Since writing an "empty" regular expression such as "^$" to match this page seems really
+	  strange, the router will accept *only* a route with the page id, for example "#foobar"
 
 
 ---------------
@@ -123,6 +161,7 @@ myRoutes supports the following formats:
 		s	=> pageshow
 		bh	=> pagebeforehide
 		h	=> pagehide
+		rm	=> pageremove
 
 --- 2)
 	* The above syntax, however, doesn't let one use the same regular expression to call
@@ -231,6 +270,16 @@ jQuery Mobile Router supports the following parameters:
 
 	ajaxApp: tells the plugin to use the full page path for its matches instead of
 		 the hash part of the url
+
+
+	defaultHandler: a function reference or a function name to be called when no matchin
+		route is found
+
+	defaultHandlerEvents: the defaultHandler will be called for these events, if
+		no routes are matched. Please note that THESE EVENTS MUST BE DEFINED 
+		AT LEAST ONCE IN ANOTHER ROUTE, otherwise the defaultHandler won't be executed.
+		That is to say, if your routes are defined for "pagebeforeshow" and "pageshow"
+		events only, a defaultHandler for the "pagehide" event won't work!
 
 
 You can pass an object with the above properties to the single router instance or set it

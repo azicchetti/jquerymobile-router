@@ -1,4 +1,4 @@
-/* jQueryMobile-router v0.5
+/* jQueryMobile-router v0.6
  * Copyright 2011, Andrea Zicchetti
  */
 (function($){
@@ -19,7 +19,7 @@ $(document).bind("mobileinit",function(){
 	*/
 
 	var config=$.extend({
-		fixFirstPageDataUrl: false, firstPageDataUrl: "index.html"
+		fixFirstPageDataUrl: false, firstPageDataUrl: "index.html", ajaxApp: false
 	},$.mobile.jqmRouter || {});
 
 
@@ -100,23 +100,21 @@ $(document).bind("mobileinit",function(){
 			pagebeforehide: null, pagehide: null,
 			pageinit: null, pageremove: null
 		};
-        this.evtLookup = {
-            bc: "pagebeforecreate", c: "pagecreate",
-            bs: "pagebeforeshow", s: "pageshow",
-            bh: "pagebeforehide", h: "pagehide",
-            i: "pageinit", rm: "pageremove"
-        };
+		this.evtLookup = {
+			bc: "pagebeforecreate", c: "pagecreate",
+			bs: "pagebeforeshow", s: "pageshow",
+			bh: "pagebeforehide", h: "pagehide",
+			i: "pageinit", rm: "pageremove"
+		};
 		this.routesRex={};
-		this.conf=$.extend({
-			ajaxApp: false
-		}, conf || {});
-        this.defaultHandlerEvents = {};
-        if (this.conf.defaultHandlerEvents) {
-            var evts = this.conf.defaultHandlerEvents.split(",");
-            for (var i = 0; i < evts.length; i++) {
-                this.defaultHandlerEvents[this.evtLookup[evts[i]]] = evts[i];
-            }
-        }
+		this.conf=$.extend({}, config, conf || {});
+		this.defaultHandlerEvents = {};
+		if (this.conf.defaultHandlerEvents) {
+			var evts = this.conf.defaultHandlerEvents.split(",");
+			for (var i = 0; i < evts.length; i++) {
+				this.defaultHandlerEvents[this.evtLookup[evts[i]]] = evts[i];
+			}
+		}
 		this.add(userRoutes,userHandlers);
 	}
 	$.extend($.mobile.Router.prototype,{
@@ -177,7 +175,7 @@ $(document).bind("mobileinit",function(){
 		},
 
 		_processRoutes: function(e,ui,page){
-			var _self=this, refUrl, url, $page;
+			var _self=this, refUrl, url, $page, retry=0;
 			if (e.type in {
 				"pagebeforehide":true, "pagehide":true, "pageremove": true
 			}){
@@ -185,24 +183,34 @@ $(document).bind("mobileinit",function(){
 			} else {
 				refUrl=nextUrl;
 			}
-			if (!refUrl){
-				if (page){
-					$page=$(page);
-					refUrl=$page.jqmData("url");
-					if (refUrl){
-						if ($page.attr("id")==refUrl) refUrl="#"+refUrl;
-						refUrl=$.mobile.path.parseUrl(refUrl);
+			do {
+				if (!refUrl){
+					if (page){
+						$page=$(page);
+						refUrl=$page.jqmData("url");
+						if (refUrl){
+							if ($page.attr("id")==refUrl) refUrl="#"+refUrl;
+							refUrl=$.mobile.path.parseUrl(refUrl);
+						}
 					}
+				} else if (page && !$(page).jqmData("url")){
+					return;
 				}
-			} else if (page && !$(page).jqmData("url")){
-				return;
-			}
-			if (!refUrl) return;
-			url=( !this.conf.ajaxApp ?
-				refUrl.hash
-				:refUrl.pathname + refUrl.search + refUrl.hash
-			);
-            var bHandled = false;
+				if (!refUrl) return;
+				url=( !this.conf.ajaxApp ?
+					refUrl.hash
+					:refUrl.pathname + refUrl.search + refUrl.hash
+				);
+				if (url.length==0){
+					// if ajaxApp is false, url may be "" when the user clicks the back button
+					// and returns to the first page of the application (which is usually
+					// loaded without the hash part of the url). Let's handle this...
+					refUrl="";
+				}
+				retry++;
+			} while(url.length==0 && retry<=1);
+
+			var bHandled = false;
 			$.each(this.routes[e.type],function(route,handler){
 				var res, handleFn;
 				if ( (res=url.match(_self.routesRex[route])) ){
@@ -217,14 +225,14 @@ $(document).bind("mobileinit",function(){
 					}
 				}
 			});
-            //Pass to default if specified and can handle this event type
-            if (!bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type]) {
-                if (typeof(this.conf.defaultHandler) == "function") {
-                    try {
-                        this.conf.defaultHandler(e.type, ui, page);
-                    } catch(err) { debug(err); }
-                }
-            }
+			//Pass to default if specified and can handle this event type
+			if (!bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type]) {
+				if (typeof(this.conf.defaultHandler) == "function") {
+					try {
+						this.conf.defaultHandler(e.type, ui, page);
+					} catch(err) { debug(err); }
+				}
+			}
 		},
 
 		_detachEvents: function(){
