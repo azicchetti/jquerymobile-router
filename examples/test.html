@@ -7,37 +7,41 @@
         <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
         <script type="text/javascript">
-            var router=new $.mobile.Router({
-                "#localpage2(?:[?/](.*))?": {handler: "localpage", events: "bc,c,i,bs,s,bh,h"},
-                "#index": { handler: function(type){
-                    console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
-                }, events: "h,s" }
-            },{
-                localpage: function(type,match,ui){
-                    console.log("localpage2: "+type);
-                    console.log(match);
-                }
-            }, { 
-                defaultHandler: function(type, ui, page) {
-                    console.log("Default handler called due to unknown route (" + type + ", " + ui + ", " + page + ")");
-                },
-                defaultHandlerEvents: "s"
-            });
-            setTimeout(function(){
-                alert("adding a dynamic route to localpage3...");
-                router.add({
-                    "#localpage3(?:[?/](.*))?": {handler: "localpage3", events: "s"}
-                },{
-                    localpage3: function(type,match){
-                        console.log("localpage3: "+type);
-                        console.log(match);
-                    }
-                });
-            },20000);
-            setTimeout(function(){
-                alert("deactivating router...");
-                router.destroy();
-            },120000);
+	var router=new $.mobile.Router({
+		"#localpage2(?:[?/](.*))?": {handler: "localpage", events: "bc,c,i,bs,s,bh,h"},
+		"#index": { handler: function(type){
+			console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
+		}, events: "h,s" }
+	},{
+		localpage: function(type,match,ui){
+			console.log("localpage2: "+type);
+			console.log(match);
+		}
+	}, { 
+		defaultHandler: function(type, ui, page) {
+			console.log("Default handler called due to unknown route (" 
+				+ type + ", " + ui + ", " + page + ")"
+			);
+		},
+		defaultHandlerEvents: "s"
+	});
+
+	setTimeout(function(){
+		alert("adding a dynamic route to localpage3...");
+		router.add({
+			"#localpage3(?:[?/](.*))?": {handler: "localpage3", events: "s"}
+		},{
+			localpage3: function(type,match){
+				console.log("localpage3: "+type);
+				console.log(match);
+			}
+		});
+	},20000);
+
+	setTimeout(function(){
+		alert("deactivating router...");
+		router.destroy();
+	},120000);
         </script>
 </head>
 
@@ -56,6 +60,8 @@
                         <a href="#localpage2?foo=bar&bar=foo&foobarbaz">#localpage2 with params v2 (classic)</a><br/>
                         The following route will be enabled after 20seconds<br/>
                         <a href="#localpage3?blablah">#localpage3 with params</a><br/>
+			The following link will show how a default route works<br/>
+                        <a href="#localpage4">#localpage4</a><br/>
                 </p>
         </div>
 
@@ -92,6 +98,21 @@
 
         <div data-role="footer">
                 <h4>Localpage 3 Footer</h4>
+        </div>
+</div>
+
+<div data-role="page" id="localpage4" data-add-back-btn="true">
+        <div data-role="header">
+                <h1>Localpage 4</h1>
+        </div>
+
+        <div data-role="content">
+                <p>This is the localpage 4 in the multipage template.</p>
+                <p><a href="#index">Back to index</a></p>
+        </div>
+
+        <div data-role="footer">
+                <h4>Localpage 4 Footer</h4>
         </div>
 </div>
 

@@ -5,34 +5,35 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
         <script type="text/javascript">
-          $(document).bind("mobileinit",function(){
-            $.mobile.jqmRouter={
-              ajaxApp: true
-            };
-          });
+	$(document).bind("mobileinit",function(){
+		$.mobile.jqmRouter={
+			ajaxApp: true
+		};
+	});
         </script>
-              <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
-              <script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+	<script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
         <script type="text/javascript">
-          var router=new $.mobile.Router({
-            "/testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s,h"},
-            "/__subTestAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h"},
-            "/__subTestAjax3.html": {handler: "ajaxPage", events: "rm"}
-          },{
-            ajaxPage: function(type,match,ui){
-              console.log("ajaxPage: "+type);
-              console.log(match);
-            }
-          }, { 
-            defaultHandler: function(type, ui, page) {
-                console.log("Default handler called due to unknown route (" + type + ", " + ui + ", " + page + ")");
-            },
-            defaultHandlerEvents: "s"
-        });
-          setTimeout(function(){
-            alert("deactivating router...");
-            router.destroy();
-          },120000);
+	var router=new $.mobile.Router({
+		"/testAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,bs,s,h"},
+		"/__subTestAjax.html(?:[?](.*))?": {handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h"},
+		"/__subTestAjax3.html": {handler: "ajaxPage", events: "rm"}
+	},{
+		ajaxPage: function(type,match,ui){
+			console.log("ajaxPage: "+type);
+			console.log(match);
+		}
+	}, { 
+		defaultHandler: function(type, ui, page) {
+			console.log("Default handler called due to unknown route (" 
+				+ type + ", " + ui + ", " + page + ")");
+		},
+		defaultHandlerEvents: "s"
+	});
+	setTimeout(function(){
+		alert("deactivating router...");
+		router.destroy();
+	},120000);
         </script>
 </head>
 
