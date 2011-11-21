@@ -25,30 +25,23 @@ M.data=new Data();
 
 C.renderDetail=function(type,match,ui){
 	if (!match) return;
+	if (!V.detail){
+		V.detail=new DetailView({
+			model: M.data, detailId: null, el: $("#detail :jqmData(role='content')")
+		});
+	}
+	var params=C.router.getParams(match[1]);
+	if (params){
+		V.detail.options.detailId=params.id;
+	}
 	if (M.data.isEmpty()){
 		M.data.fetch();
 	}
-	C.appBooted.then(function(){
-		var params=C.router.getParams(match[1]);
-		if (params){
-			V.detail.options.detailId=params.id;
-			V.detail.render();
-		}
-	});
 };
 
 C.router=new $.mobile.Router({
 	"#detail([?].*)?": {
 		handler: C.renderDetail, events: "bs"
 	}
-});
-
-C.appBooted=$.Deferred();
-
-$(function(){
-	V.detail=new DetailView({
-		model: M.data, detailId: null, el: $("#detail :jqmData(role='content')")
-	});
-	C.appBooted.resolve();
 });
 
