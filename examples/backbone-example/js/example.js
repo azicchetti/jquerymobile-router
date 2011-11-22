@@ -36,6 +36,8 @@ C.renderDetail=function(type,match,ui){
 	}
 	if (M.data.isEmpty()){
 		M.data.fetch();
+	} else {
+		V.detail.render();
 	}
 };
 
