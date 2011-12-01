@@ -1,0 +1,146 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+<script src="../js/jquery.mobile.router-test.js"></script>
+<script src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+<style type="text/css">
+</style>
+<script type="text/javascript">
+	var r=new $.mobile.Router({ "#index([?].*)?": {
+		handler: function(e,params,ui,page){
+			console.log(e);
+			console.log(params);
+		}, events: "bs,bh" }
+	});
+</script>
+</head>
+<body>
+
+<div data-role="page" id="index" data-add-back-btn="true">
+	<div data-role="header"><h2>index</h2></div>
+	<div data-role="content">
+		<ul data-role="listview">
+			<li>
+				<h3>Animals</h3>
+				<p>All your favorites from aarkvarks to zebras.</p>
+				<ul>
+					<li>Pets
+						<ul>
+							<li><a href="#pippo">Canary</a></li>
+							<li><a href="#pippo">Cat</a></li>
+							<li><a href="#pippo">Dog</a></li>
+							<li><a href="#pippo">Gerbil</a></li>
+							<li><a href="#pippo">Iguana</a></li>
+							<li><a href="#pippo">Mouse</a></li>
+						</ul>
+					</li>
+					<li>Farm animals
+						<ul>
+							<li><a href="#pippo">Chicken</a></li>
+							<li><a href="#pippo">Cow</a></li>
+							<li><a href="#pippo">Duck</a></li>
+							<li><a href="#pippo">Horse</a></li>
+							<li><a href="#pippo">Pig</a></li>
+							<li><a href="#pippo">Sheep</a></li>
+						</ul>
+					</li>
+					<li>Wild animals
+						<ul>
+							<li><a href="#pippo">Aardvark</a></li>
+							<li><a href="#pippo">Alligator</a></li>
+							<li><a href="#pippo">Ant</a></li>
+							<li><a href="#pippo">Bear</a></li>
+							<li><a href="#pippo">Beaver</a></li>
+							<li><a href="#pippo">Cougar</a></li>
+							<li><a href="#pippo">Dingo</a></li>
+							<li><a href="#pippo">Eagle</a></li>
+							<li><a href="#pippo">Elephant</a></li>
+							<li><a href="#pippo">Ferret</a></li>
+							<li><a href="#pippo">Frog</a></li>
+							<li><a href="#pippo">Giraffe</a></li>
+							<li><a href="#pippo">Lion</a></li>
+							<li><a href="#pippo">Monkey</a></li>
+							<li><a href="#pippo">Panda bear</a></li>
+							<li><a href="#pippo">Polar bear</a></li>
+							<li><a href="#pippo">Tiger</a></li>
+							<li><a href="#pippo">Zebra</a></li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<h3>Colors</h3>
+				<p>Fresh colors from the magic rainbow.</p>
+				<ul>
+					<li><a href="#pippo">Blue</a></li>
+					<li><a href="#pippo">Green</a></li>
+					<li><a href="#pippo">Orange</a></li>
+					<li><a href="#pippo">Purple</a></li>
+					<li><a href="#pippo">Red</a></li>
+					<li><a href="#pippo">Yellow</a></li>
+					<li><a href="#pippo">Violet</a></li>
+				</ul>
+			</li>
+			<li>
+				<h3>Vehicles</h3>
+				<p>Everything from cars to planes.</p>
+				<ul>
+					<li>Cars
+						<ul>
+							<li><a href="#pippo">Acura</a></li>
+							<li><a href="#pippo">Audi</a></li>
+							<li><a href="#pippo">BMW</a></li>
+							<li><a href="#pippo">Cadillac</a></li>
+							<li><a href="#pippo">Chrysler</a></li>
+							<li><a href="#pippo">Dodge</a></li>
+							<li><a href="#pippo">Ferrari</a></li>
+							<li><a href="#pippo">Ford</a></li>
+							<li><a href="#pippo">GMC</a></li>
+							<li><a href="#pippo">Honda</a></li>
+							<li><a href="#pippo">Hyundai</a></li>
+							<li><a href="#pippo">Infiniti</a></li>
+							<li><a href="#pippo">Jeep</a></li>
+							<li><a href="#pippo">Kia</a></li>
+							<li><a href="#pippo">Lexus</a></li>
+							<li><a href="#pippo">Mini</a></li>
+							<li><a href="#pippo">Nissan</a></li>
+							<li><a href="#pippo">Porsche</a></li>
+							<li><a href="#pippo">Volkswagon</a></li>
+							<li><a href="#pippo">Volvo</a></li>
+						</ul>
+					</li>
+					<li>Planes
+						<ul>
+							<li><a href="#pippo">Boeing</a></li>
+							<li><a href="#pippo">Cessna</a></li>
+							<li><a href="#pippo">Derringer</a></li>
+							<li><a href="#pippo">Embraer</a></li>
+							<li><a href="#pippo">Gulfstream</a></li>
+							<li><a href="#pippo">Piper Aircraft</a></li>
+							<li><a href="#pippo">Raytheon</a></li>
+						</ul>
+					</li>
+					<li>Construction
+						<ul>
+							<li><a href="#pippo">Caterpillar</a></li>
+							<li><a href="#pippo">Ford</a></li>
+							<li><a href="#pippo">John Deere</a></li>
+						</ul>
+					</li>				
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div data-role="page" id="pippo" data-add-back-btn="true">
+	<div data-role="header"><h2>pippo</h2></div>
+	<div data-role="content">
+		pippo!
+	</div>
+</div>
+
+</body>
+</html>
