@@ -57,7 +57,7 @@ $(document).bind("mobileinit",function(){
 				data.options.dataUrl = u.href;
 				data.options._jqmrouter=true;
 				if (hasUiPage){
-					page+=data.toPage.match(/&ui-page=([0-9-]+)$/)[0];
+					page+=data.toPage.match(/&ui-page=(\w+-\d+)$/)[0];
 				}
 				// Now call changePage() and tell it to switch to
 				// the page we just modified, but only in case it's different
