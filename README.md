@@ -1,5 +1,4 @@
-================================================================================
-				jquerymobile-router
+jQueryMobile-Router
 ================================================================================
 
 jQuery Mobile router is a plugin for jQuery Mobile to enhance the framework
@@ -15,7 +14,6 @@ The jQuery Mobile router javascript file must be loaded before jQuery Mobile.
 This plugin can be used alone or (better) with Backbone.js or Spine.js, because it's
 originally meant to replace their router with something integrated with jQM.
 
-=====================
 What's new in the latest versions
 =====================
 * Support for a different syntax defining your routes
@@ -25,9 +23,6 @@ a simple object to play with them.
 * Bugfixes to support events for the first displayed page.
 * Default handler support
 
-
-
-=====================
 Upgrade notes
 =====================
 0.5 to 0.6
@@ -41,13 +36,11 @@ Upgrade notes
 	There's no need to use the data-params="true" anymore in your anchors since hash params
 	are enabled by default.
 
-	The reuseQueriedAjaxPages extension was removed since it wasn't so useful and
-	a similar behaviour can be achieved with the new jquery mobile caching mechanism
-	(but if you need it please mail me).
+**The reuseQueriedAjaxPages extension was removed since it wasn't so useful and
+a similar behaviour can be achieved with the new jquery mobile caching mechanism
+(but if you need it please mail me).**
 
 
-
-=====================
 The router/controller
 =====================
 
@@ -56,19 +49,18 @@ if that particular url matches one of your routes and calls the handler you've
 provided with a bunch of useful arguments.
 
 When you define a route, you'll provide:
-	* a regular expression to test the url/hash against
-	* an handler (a function)
-	* when your handler must be called (for example, you may decide to setup a route
-	  only when the pagecreate and pagebeforeshow jQM events are dispatched)
+* a regular expression to test the url/hash against
+* an handler (a function)
+* when your handler must be called (for example, you may decide to setup a route only when the pagecreate and pagebeforeshow jQM events are dispatched)
 
 The plugin exports a class in $.mobile.Router and you can instantiate your routers
 with the following arguments:
 
-var approuter=new $.mobile.Router(myRoutes, myHandlers, options);
+`var approuter=new $.mobile.Router(myRoutes, myHandlers, options);`
 
-	* myRoutes is an object or an array defining your routes
-	* myHandlers is an object with your function handlers
-	* options is an object with a certain configuration (see below)
+* myRoutes is an object or an array defining your routes
+* myHandlers is an object with your function handlers
+* options is an object with a certain configuration (see below)
 
 
 Here are a few examples:
@@ -92,30 +84,25 @@ var router=new $.mobile.Router([
 ], ControllerObject);
 ```
 
+**----- IMPORTANT (no kidding!) -----**
 
------ IMPORTANT (no kidding!) -----
-
-	* By default, the router will match the routes against the hash part of the url.
+* By default, the router will match the routes against the hash part of the url.
 	  If you need the FULL PATH (pathname+search+hash), please set the "ajaxApp" configuration
 	  parameter to TRUE (see below)
 
-	* If you're using a multipage template in your jquerymobile application, the first displayed
-	  page is quite an "anomaly" in the navigation model, because, even if it has its own id, this
+* If you're using a multipage template in your jquerymobile application, the first displayed page is quite an "anomaly" in the navigation model, because, even if it has its own id, this
 	  is not reflected in the hash. This doesn't happen for other pages. This "empty hash" problem
 	  may come into play when the back button is used by the user.
 	  Since writing an "empty" regular expression such as "^$" to match this page seems really
 	  strange, the router will accept *only* a route with the page id, for example "#foobar"
 
-
----------------
 myRoutes object
 ---------------
-myRoutes supports the following formats:
+`myRoutes` supports the following formats:
 
---- 1)
-	* this one binds a certain route to the pagebeforeshow event and calls the handler,
-	  which can be an inline function or a function name (a string) that must be defined
+1. This one binds a certain route to the pagebeforeshow event and calls the handler, which can be an inline function or a function name (a string) that must be defined
 	  in the myHandlers object
+
 ```javascript		
 		{
 			"regularExpression": "handlerName",
@@ -132,7 +119,7 @@ myRoutes supports the following formats:
 		}
 ```
 
-	* this is the full syntax to specify various jQM events you want your route to be
+2. This is the full syntax to specify various jQM events you want your route to be
 	  bound to.
 	  The object defines an "handler" property with a string value: this is the name
 	  of a function defined in the myHandlers object. Again, you may also put an inline
@@ -140,6 +127,7 @@ myRoutes supports the following formats:
 	  The object also defines an "events" property with a string value: this is a list
 	  of (shortened) jQM events, separated by a ",". Your route will be called only when
 	  these events are fired. 
+
 ```javascript	  
 		{
 			"regularExpression": { 
@@ -153,11 +141,12 @@ myRoutes supports the following formats:
 				handler: function(){ ... },
 				events: "bc,c,bs,s,bh,h"
 			},
-		}
+		}		
 ```
-	  Please refer to the following schema to understand event codes (it's really
-	  straightforward)
 
+Please refer to the following schema to understand event codes (it's really straightforward)
+
+```javascript
 		bc	=> pagebeforecreate
 		c	=> pagecreate
 		i	=> pageinit
@@ -166,10 +155,9 @@ myRoutes supports the following formats:
 		bh	=> pagebeforehide
 		h	=> pagehide
 		rm	=> pageremove
+```
 
---- 2)
-	* The above syntax, however, doesn't let one use the same regular expression to call
-	  different handlers (this is due to the fact that the regexp is a key into an hashmap,
+* The above syntax, however, doesn't let one use the same regular expression to call different handlers (this is due to the fact that the regexp is a key into an hashmap,
 	  so it must be unique). If you need, for instance, to call the function "foo" when a
 	  certain page has been shown, and the function "bar" when the same page has been hidden,
 	  you could use the following syntax:
@@ -184,13 +172,13 @@ myRoutes supports the following formats:
 		}, options);
 ```
 
-	  By using an array, you can specify the SAME REGULAR EXPRESSION multiple times, but for
-	  DIFFERENT EVENT TYPES.
+By using an array, you can specify the **SAME REGULAR EXPRESSION** multiple times, but for **DIFFERENT EVENT TYPES**.
 
 
-This is an example of a common myRoutes object:
+This is an example of a common `myRoutes` object:
 
-Syntax 1)
+Syntax 1:
+
 ```javascript
 	{
 		"#localpage(?:[?/](.*))?": {
@@ -203,7 +191,8 @@ Syntax 1)
 	}
 ```
 
-and syntax 2)
+Syntax 2:
+
 ```javascript
 	[
 		{ "#localpage(?:[?/](.*))?": { handler: "localpage", events: "bs,bh" } },
@@ -212,13 +201,14 @@ and syntax 2)
 	]
 ```
 
------------------
+
 myHandlers object
 -----------------
 There isn't much to say about this object. Simply provide the function handlers you've
 specified in the myRoutes object.
 
 For example:
+
 ```javascript
 	{
 		handlerName: function(eventType,matchObj,ui,page){
@@ -228,38 +218,35 @@ For example:
 ```
 
 Your handlers will be called with the following arguments:
-	* eventType: the name of the jQM event that's triggering the handler (pagebeforeshow,
+* eventType: the name of the jQM event that's triggering the handler (pagebeforeshow,
 	  pagecreate, pagehide, etc)
-	* matchObj: the handler is called when your regular expression matches the current
+* matchObj: the handler is called when your regular expression matches the current
 	  url or fragment. This is the match object of the regular expression.
 	  If the regular expression uses groups, they will be available in this object.
 	  Cool eh?
-	* ui: this is the second argument provided by the jQuery Mobile event. Usually holds
+* ui: this is the second argument provided by the jQuery Mobile event. Usually holds
 	  the reference to either the next page (nextPage) or previous page (prevPage).
-	  More information here: http://jquerymobile.com/demos/1.0b1/docs/api/events.html
-	* page: the dom element that originated the jquery mobile page event
+	  More information here: (http://jquerymobile.com/demos/1.0b1/docs/api/events.html)[http://jquerymobile.com/demos/1.0b1/docs/api/events.html]
+* page: the dom element that originated the jquery mobile page event
 
-
-
---------------
 Public methods
 --------------
 
 Router objects have the following public methods:
 
-	`add(myRoutes,myHandlers)`:
-			You can dynamically add routes on an already instantiated router.
-			The myRoutes and myHandlers objects were already described above.
+*`add(myRoutes,myHandlers)`:
+	You can dynamically add routes on an already instantiated router.
+	The myRoutes and myHandlers objects were already described above.
 
-	`destroy()`:
-			Unbind events and deactivate this router instance
+*`destroy()`:
+	Unbind events and deactivate this router instance
 
-	`getParams(hashPartOfTheUrl)`:
-			Returns an object with the parameters encoded in the url or null
-			if nothing's found.
-			For instance, if you have something like:
-				#detail?id=3&foo=bar
-			and call routerInstance.getParams("?id=3&foo=bar")
+*`getParams(hashPartOfTheUrl)`:
+	Returns an object with the parameters encoded in the url or null
+	if nothing's found.
+	For instance, if you have something like:
+				`#detail?id=3&foo=bar`
+			and call `routerInstance.getParams("?id=3&foo=bar")`
 			you'll get:
 ```javascript				
 				{
@@ -267,23 +254,23 @@ Router objects have the following public methods:
 					foo: "bar"
 				}
 ```
-			There's an example under examples/backbone-example !
+
+**There's an example under examples/backbone-example !**
 
 
-
-==============
 jQM Configuration
-==============
+==================
+
 jQuery Mobile Router supports the following parameters:
 
-	ajaxApp: tells the plugin to use the full page path for its matches instead of
+*`ajaxApp`: tells the plugin to use the full page path for its matches instead of
 		 the hash part of the url
 
 
-	defaultHandler: a function reference or a function name to be called when no matchin
+*`defaultHandler`: a function reference or a function name to be called when no matchin
 		route is found
 
-	defaultHandlerEvents: the defaultHandler will be called for these events, if
+*`defaultHandlerEvents`: the defaultHandler will be called for these events, if
 		no routes are matched. Please note that THESE EVENTS MUST BE DEFINED 
 		AT LEAST ONCE IN ANOTHER ROUTE, otherwise the defaultHandler won't be executed.
 		That is to say, if your routes are defined for "pagebeforeshow" and "pageshow"
@@ -301,15 +288,13 @@ globally with this code (must be used BEFORE loading jquery.mobile.router.js):
 	});
 ```
 
-
-==============
 Notes on jQM router
 ==============
 
 Have you ever wanted client-side parameters in the hash part of the url in jQuery Mobile?
 
 Well, jquery mobile router automatically enables this feature for you, using an official
-"hack"* provided in the jQM documentation.
+*"hack"* provided in the jQM documentation.
 
 * This hack isn't quite different from the one previously used by this plugin. But since
 there's something 'official', we'll be guaranteed that our code will be supported in future
