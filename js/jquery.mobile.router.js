@@ -220,7 +220,7 @@ $(document).bind("mobileinit",function(){
 						handleFn=_self.userHandlers[handler];
 					}
 					if (handleFn){
-						try { handleFn(e.type,res,ui,page); bHandled = true;
+						try { handleFn(e.type,res,ui,page,e); bHandled = true;
 						}catch(err){ debug(err); }
 					}
 				}
@@ -229,7 +229,7 @@ $(document).bind("mobileinit",function(){
 			if (!bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type]) {
 				if (typeof(this.conf.defaultHandler) == "function") {
 					try {
-						this.conf.defaultHandler(e.type, ui, page);
+						this.conf.defaultHandler(e.type, ui, page, e);
 					} catch(err) { debug(err); }
 				}
 			}

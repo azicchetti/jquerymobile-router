@@ -22,6 +22,7 @@ a simple object to play with them.
 * Support for the pageinit event.
 * Bugfixes to support events for the first displayed page.
 * Default handler support
+* The original jquery mobile event is passed down to route handlers
 
 Upgrade notes
 =====================
@@ -211,23 +212,32 @@ For example:
 
 ```javascript
 	{
-		handlerName: function(eventType,matchObj,ui,page){
+		handlerName: function(eventType, matchObj, ui, page, evt){
 			// your code here
 		}
 	}
 ```
 
 Your handlers will be called with the following arguments:
+
 * eventType: the name of the jQM event that's triggering the handler (pagebeforeshow,
-	  pagecreate, pagehide, etc)
+	pagecreate, pagehide, etc)
+
 * matchObj: the handler is called when your regular expression matches the current
-	  url or fragment. This is the match object of the regular expression.
-	  If the regular expression uses groups, they will be available in this object.
-	  Cool eh?
+	url or fragment. This is the match object of the regular expression.
+	If the regular expression uses groups, they will be available in this object.
+	Cool eh?
+
 * ui: this is the second argument provided by the jQuery Mobile event. Usually holds
-	  the reference to either the next page (nextPage) or previous page (prevPage).
-	  More information here: (http://jquerymobile.com/demos/1.0b1/docs/api/events.html)[http://jquerymobile.com/demos/1.0b1/docs/api/events.html]
+	the reference to either the next page (nextPage) or previous page (prevPage).
+	More information here: (http://jquerymobile.com/demos/1.0/docs/api/events.html)[http://jquerymobile.com/demos/1.0/docs/api/events.html]
+
 * page: the dom element that originated the jquery mobile page event
+
+* evt: the original event that comes from jquery mobile. You can use this to
+	prevent the default behaviour and, for instance, stop a certain page from being
+	removed from the dom during the pageremove event.
+
 
 Public methods
 --------------
