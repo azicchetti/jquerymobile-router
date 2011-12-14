@@ -322,7 +322,7 @@ You may use jQueryMobile-Router under the terms of either the MIT License or the
 
 You don’t have to do anything special to choose one license or the other and you don’t have to notify anyone which license you are using. You are free to use a jQueryMobile-Router in commercial projects as long as the copyright header is left intact.
 
-**For more information:**
+**For more information see:**
 
 * [MIT License](http://github.com/azicchetti/jquerymobile-router/blob/master/MIT-LICENSE.txt) [(More Information)](http://en.wikipedia.org/wiki/MIT_License)
 * [GPL](http://github.com/azicchetti/jquerymobile-router/blob/master/GPL-LICENSE.txt) [(More Information)](http://en.wikipedia.org/wiki/GNU_General_Public_License)
