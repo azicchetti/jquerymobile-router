@@ -1,5 +1,11 @@
-/* jQueryMobile-router v0.6
- * Copyright 2011, Andrea Zicchetti
+/*
+ * jQueryMobile-router v0.6
+ * http://github.com/azicchetti/jquerymobile-router
+ *
+ * Copyright 2011 (c) Andrea Zicchetti
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://github.com/azicchetti/jquerymobile-router/blob/master/MIT-LICENSE.txt
+ * http://github.com/azicchetti/jquerymobile-router/blob/master/GPL-LICENSE.txt
  */
 (function($){
 
