@@ -315,6 +315,9 @@ For bugs, comments, patches and requests mail me!
 
 License
 ==============
+
+Copyright 2011 (c) Andrea Zicchetti
+
 You may use jQueryMobile-Router under the terms of either the MIT License or the GNU General Public License (GPL) Version 2.
 
 You don’t have to do anything special to choose one license or the other and you don’t have to notify anyone which license you are using. You are free to use a jQueryMobile-Router in commercial projects as long as the copyright header is left intact.
