@@ -14,6 +14,15 @@ The jQuery Mobile router javascript file must be loaded before jQuery Mobile.
 This plugin can be used alone or (better) with Backbone.js or Spine.js, because it's
 originally meant to replace their router with something integrated with jQM.
 
+
+Why
+=====================
+A lot of people wonder why this router uses jQuery Mobile events instead of simply listening for hashchange, as a normal controller would do.
+The main reason is to preserve the granularity offered by jQuery Mobile while giving the programmer a simple way to tap into "unusual" page transition states, such as "pageinit" or "pageremove".
+Without a tight integration with the framework, one would lose a lot of the possibilities offered by jQuery Mobile and this is not only a pity, but also very frustrating, especially when things get complicated (as it always does in real-life projects).
+In addition, if you want to use standard hash-based routers, you have to disable some of the features that make jQuery Mobile so unique among similar libraries and do a few things "by hand", just to fill an irreconcilable gap between how jQuery Mobile works and how we usually handle routes in normal web applications.
+
+
 What's new in the latest versions
 =====================
 * Support for a different syntax defining your routes
@@ -50,9 +59,11 @@ if that particular url matches one of your routes and calls the handler you've
 provided with a bunch of useful arguments.
 
 When you define a route, you'll provide:
+
 * a regular expression to test the url/hash against
 * an handler (a function)
 * when your handler must be called (for example, you may decide to setup a route only when the pagecreate and pagebeforeshow jQM events are dispatched)
+
 
 The plugin exports a class in $.mobile.Router and you can instantiate your routers
 with the following arguments:
