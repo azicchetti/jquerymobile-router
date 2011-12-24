@@ -18,9 +18,12 @@ originally meant to replace their router with something integrated with jQM.
 Why
 =====================
 A lot of people wonder why this router uses jQuery Mobile events instead of simply listening for hashchange, as a normal controller would do.
-The main reason is to preserve the granularity offered by jQuery Mobile while giving the programmer a simple way to tap into "unusual" page transition states, such as "pageinit" or "pageremove".
-Without a tight integration with the framework, one would lose a lot of the possibilities offered by jQuery Mobile and this is not only a pity, but also very frustrating, especially when things get complicated (as it always does in real-life projects).
-In addition, if you want to use standard hash-based routers, you have to disable some of the features that make jQuery Mobile so unique among similar libraries and do a few things "by hand", just to fill an irreconcilable gap between how jQuery Mobile works and how we usually handle routes in normal web applications.
+
+The main reason is to preserve the granularity offered by jQuery Mobile while giving the programmer a simple way to tap into "unusual" page transition states, such as "pageinit" or "pageremove", as if they were standard routes. The outcome is a controller which is more powerful and versatile, in the jQM realm, than its purely hashchange based counterpart.
+
+Without a tight integration with the framework one would lose a lot of the possibilities offered by jQuery Mobile and this is not only a pity, but also very frustrating, especially when things get complicated (as it always does in real-life projects) and you need to resort to its most advanced functions.
+
+In addition, if you want to use standard hashchange-based routers, you have to disable some of the features that make jQuery Mobile so unique among similar libraries and do a few things "by hand", just to fill an irreconcilable gap between how jQuery Mobile works and how we are used to handle routes in normal web applications.
 
 
 What's new in the latest versions
