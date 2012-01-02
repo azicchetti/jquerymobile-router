@@ -42,7 +42,7 @@ C.renderDetail=function(type,match,ui){
 };
 
 C.router=new $.mobile.Router({
-	"#index": function(){ alert("INDEX!"); },
+	"#index": function(){ console.log("INDEX!"); },
 	"#detail([?].*)?": {
 		handler: C.renderDetail, events: "bs"
 	}
