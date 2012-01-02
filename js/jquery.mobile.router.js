@@ -173,7 +173,7 @@ $(document).bind("mobileinit",function(){
 						events: evtList.join(" "),
 						handler: function(e,ui){ _self._processRoutes(e,ui,this); }
 					};
-					$("div:jqmData(role='page'),div:jqmData(role='dialog')").live(
+					$(":jqmData(role='page'),:jqmData(role='dialog')").live(
 						this._liveData.events, this._liveData.handler
 					);
 				}
@@ -243,7 +243,7 @@ $(document).bind("mobileinit",function(){
 
 		_detachEvents: function(){
 			if (this._liveData){
-				$("div:jqmData(role='page'),div:jqmData(role='dialog')").die(
+				$(":jqmData(role='page'),:jqmData(role='dialog')").die(
 					this._liveData.events, this._liveData.handler
 				);
 			}
