@@ -144,7 +144,7 @@ $(document).bind("mobileinit",function(){
 						}
 					} else {
 						var i,trig=el.events.split(","),evt;
-						for(i in trig){
+						for(i=0;i<trig.length;i++){
 							evt=_self.evtLookup[trig[i]];
 							if (_self.routes.hasOwnProperty(evt)){
 								if (_self.routes[evt]===null){
