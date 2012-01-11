@@ -112,7 +112,7 @@ var router=new $.mobile.Router([
 	  Since writing an "empty" regular expression such as "^$" to match this page seems really
 	  strange, the router will accept *only* a route with the page id, for example "#foobar"
 
-* If you need to use backslashes (as in: \d, \s, etc) in your regular expressions, please make sure to escape them (\\d, \\s). You may test your regexp by using: "yourstring".match( new RegExp("regexp string") )
+* If you need to use backslashes (as in: \d, \s, etc) in your regular expressions, please make sure to escape them (\\\\d, \\\\s). You may test your regexp by using: "yourstring".match( new RegExp("regexp string") )
 
 
 
