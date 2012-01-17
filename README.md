@@ -272,11 +272,17 @@ Router objects have the following public methods:
 
 *`getParams(hashPartOfTheUrl)`:
 	Returns an object with the parameters encoded in the url or null
-	if nothing's found.
-	For instance, if you have something like:
-				`#detail?id=3&foo=bar`
-			and call `routerInstance.getParams("?id=3&foo=bar")`
-			you'll get:
+	if nothing's found. It's particularly useful when used with a general regexp such as the following one:
+
+	`"#page(?:[?](.*))?"`
+
+	For instance, if you have this url:  `#page?id=3&foo=bar`
+	and call:
+
+	`routerInstance.getParams("?id=3&foo=bar")`  or (if you used the regexp)
+	`routerInstance.getParams(match[1])`
+
+	you'll get:
 ```javascript				
 				{
 					id: "3",
