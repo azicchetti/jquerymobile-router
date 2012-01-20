@@ -47,7 +47,7 @@ C.renderForm = function (type, match, ui) {
 };
 
 C.renderPage = function (type, match, ui) {
-    console.log('render Page - #dynForm id: ' + C.router.getParams(match[1]).formId);
+    console.log('render Page - #dynForm id: ' + type, 'match: ' + match);
 };
 
 C.router=new $.mobile.Router({
@@ -59,7 +59,7 @@ C.router=new $.mobile.Router({
         handler : C.renderForm, events : "bs"
     },
     ".": {
-        handler: "C.renderPage", events: "bc"
+        handler: C.renderPage, events: "bc"
     }
 });
 
