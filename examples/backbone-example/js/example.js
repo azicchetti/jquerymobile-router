@@ -41,10 +41,25 @@ C.renderDetail=function(type,match,ui){
 	}
 };
 
+
+C.renderForm = function (type, match, ui) {
+    console.log('renderForm - #dynForm id: ' + C.router.getParams(match[1]).formId);
+};
+
+C.renderPage = function (type, match, ui) {
+    console.log('render Page - #dynForm id: ' + C.router.getParams(match[1]).formId);
+};
+
 C.router=new $.mobile.Router({
 	"#index": function(){ console.log("INDEX!"); },
 	"#detail([?].*)?": {
 		handler: C.renderDetail, events: "bs"
-	}
+	},
+    "#dynForm([?].*)?" : {
+        handler : C.renderForm, events : "bs"
+    },
+    ".": {
+        handler: "C.renderPage", events: "bc"
+    }
 });
 
