@@ -4,6 +4,13 @@ var Data=Backbone.Collection.extend({
 	url: "services/getData.js"
 });
 
+M.data=new Data();
+
+
+
+
+
+
 var DetailView=Backbone.View.extend({
 	template: _.template('<div class="id">Id: <%= id %></div><div class="title">Titolo: <%= title %></div><div class="text">Testo: <%= text %></div>'),
 
@@ -21,7 +28,6 @@ var DetailView=Backbone.View.extend({
 });
 
 
-M.data=new Data();
 
 C.renderDetail=function(type,match,ui){
 	if (!match) return;
@@ -47,8 +53,10 @@ C.renderForm = function (type, match, ui) {
 };
 
 C.renderPage = function (type, match, ui) {
-    console.log('render Page - #dynForm id: ' + type, 'match: ' + match);
+    console.log('render Page - #dynForm id: ' + C.router.getParams(match[1]).formId);
 };
+
+
 
 C.router=new $.mobile.Router({
 	"#index": function(){ console.log("INDEX!"); },
@@ -59,7 +67,7 @@ C.router=new $.mobile.Router({
         handler : C.renderForm, events : "bs"
     },
     ".": {
-        handler: C.renderPage, events: "bc"
+        handler: "C.renderPage", events: "bc"
     }
 });
 
