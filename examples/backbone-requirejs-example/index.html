@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>jQM-router example</title>
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+
+        <script data-main="js/main" src="js/libs/require-1.0.4.js" type="text/javascript"></script>
+
+	</head>
+<!-- Will be set to show in app.init() -->
+<body style="display: none">
+
+	<div id="index" data-role="page">
+
+		<div data-role="header">
+			<h1>jQM-router and backbone</h1>
+		</div>
+
+		<div data-role="content">
+			<a data-role="button" href="#detail?id=1">Detail 1</a>
+			<a data-role="button" href="#detail?id=2">Detail 2</a>
+			<a data-role="button" href="#detail?id=3">Detail 3</a>
+
+		</div>
+
+		<div data-role="footer" data-position="fixed">
+			<h4>Footer</h4>
+		</div>
+
+	</div>
+
+	<div id="detail" data-role="page" data-add-back-btn="true">
+
+		<div data-role="header">
+			<h1>Detail</h1>
+		</div>
+
+		<div data-role="content">
+		</div>
+
+		<div data-role="footer" data-position="fixed">
+			<h4>Footer</h4>
+		</div>
+
+	</div>
+
+   </body>
+</html>
