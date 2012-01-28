@@ -221,6 +221,48 @@ Syntax 2:
 	]
 ```
 
+Choosing the right event
+-----------------
+In order to successfully exploit routing under jQuery Mobile, the developer should have
+at least a minimal knowledge of its event system (among other things!):
+http://jquerymobile.com/demos/1.0.1/docs/api/events.html
+
+Once you're familiar with page change events, you can choose the right one in order to achieve
+the desired behaviour in your application.
+I know this may be a difficult choice, at least initially, so I'll try to sort things out for you.
+Bear in mind that the following are just suggestions that cannot replace a deep knowledge
+of the jQuery Mobile framework.
+
+For single-file multipage applications (you have an html file containing a lot of jQM pages):
+
+ * pagebeforeshow or pageshow:
+	These events are called every time a particular page is shown.
+	This is perfect to render and update a page, often using the parameters in the hash part of the url
+
+ * pagebeforehide or pagehide:
+	These events are called every time a particular page is hidden.
+	You can use these events to clean views or models, to free resources and clean the DOM.
+
+For ajax applications (multiple files containing a single jQM page):
+
+ * You can still use the events described above... but keep on reading, you may find a better option
+
+ * pagebeforecreate, pagecreate or pageinit:
+	These events are called before/after a jQuery Mobile page has been initialized. Remember that initialization
+	happens ***just once*** for a particular page (unless it's removed from the DOM, see below).
+	If you make changes to the DOM before a page or a widget is initialized, you won't have to update
+	or refresh it. But please note that if your models need to be refreshed through an ajax call,
+	you'll probably get your results back from the remote server when the page has already been widget-ified
+	by jQuery Mobile, so pay attention to this scenario and prefer the "pageinit" event, unless you know
+	what you're doing.
+
+ * pageremove:
+	This one is called when a page is automatically removed from the DOM by the framework. This applies only
+	to pages that were fetched via ajax.
+	When the user navigates away from a certain page, jQuery Mobile will remove it from the DOM to keep its
+	size small, unless otherwise specified (see the data-dom-cache="true" option in the doc).
+	Use this event to clean models and views references.
+
 
 myHandlers object
 -----------------
