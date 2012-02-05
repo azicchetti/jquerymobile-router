@@ -52,8 +52,8 @@ C.renderForm = function (type, match, ui) {
     console.log('renderForm - #dynForm id: ' + C.router.getParams(match[1]).formId);
 };
 
-C.renderPage = function (type, match, ui) {
-    console.log('render Page - #dynForm id: ' + C.router.getParams(match[1]).formId);
+C.pageInit = function (type, match, ui, page) {
+    console.log('This page '+$(page).jqmData("url")+" has been initialized");
 };
 
 
@@ -63,11 +63,11 @@ C.router=new $.mobile.Router({
 	"#detail([?].*)?": {
 		handler: C.renderDetail, events: "bs"
 	},
-    "#dynForm([?].*)?" : {
-        handler : C.renderForm, events : "bs"
-    },
-    ".": {
-        handler: "C.renderPage", events: "bc"
-    }
+	"#dynForm([?].*)?" : {
+		handler : C.renderForm, events : "bs"
+	},
+	".": {
+		handler: C.pageInit, events: "i"
+	}
 });
 

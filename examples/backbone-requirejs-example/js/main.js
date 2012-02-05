@@ -8,7 +8,7 @@ require.config({
         jqmr : 'libs/jquery.mobile.router',
         app : 'src/app',
         'collection.data' : 'src/collection/data',
-        'view.detail' : 'src/view/detail'
+        'view.detail' : 'src/view/Detail'
     }
 });
 

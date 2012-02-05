@@ -27,7 +27,7 @@ define(['collection.data', 'view.detail'],
                         }
                         if (!ExampleNS.V.detail) {
                             ExampleNS.V.detail = new DetailView({
-                                model : ExampleNS.M.data, detailId : null, el : $("#detail :jqmData(role='content')")
+                                collection: ExampleNS.M.data, detailId : null, el : $("#detail :jqmData(role='content')")
                             });
                         }
                         var params = ExampleNS.C.router.getParams(match[1]);
@@ -41,7 +41,11 @@ define(['collection.data', 'view.detail'],
                             ExampleNS.V.detail.render();
                         }
 
-                    }
+                    },
+
+		    pageInit : function (type, match, ui, page) {
+			console.log("This page ("+$(page).jqmData("url")+") has been initialized");
+		    }
                 }
             };
 
@@ -51,7 +55,10 @@ define(['collection.data', 'view.detail'],
                 },
                 "#detail([?].*)?" : {
                     handler : ExampleNS.C.renderDetail, events : "bs"
-                }
+                },
+		".": {
+		    handler : ExampleNS.C.pageInit, events: "i"
+		}
             });
 
             // in order to prevent foc
