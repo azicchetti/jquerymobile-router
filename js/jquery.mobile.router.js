@@ -74,6 +74,9 @@ $(document).bind("mobileinit",function(){
 
 	if (config.fixFirstPageDataUrl){
 		$(document).ready(function(){
+			if (!window.location.pathname.match("/$")){
+				return;
+			}			
 			var page=$(":jqmData(role='page')").first();
 			var	dataUrl=page.jqmData("url"),
 				guessedDataUrl=window.location.pathname
@@ -81,9 +84,7 @@ $(document).bind("mobileinit",function(){
 					+window.location.search
 					+window.location.hash
 			;
-			if (!window.location.pathname.match("/$")){
-				return;
-			}
+
 			if (dataUrl!=guessedDataUrl){
 				page.attr("data-url",guessedDataUrl)
 					.jqmData("url",guessedDataUrl);
