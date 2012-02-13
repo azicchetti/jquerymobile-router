@@ -268,6 +268,7 @@ myHandlers object
 -----------------
 There isn't much to say about this object. Simply provide the function handlers you've
 specified in the myRoutes object.
+By default, your route handlers are executed in the myHandlers scope.
 
 For example:
 
