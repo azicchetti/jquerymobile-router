@@ -1,4 +1,4 @@
-/*
+/*!
  * jQueryMobile-router v0.6
  * http://github.com/azicchetti/jquerymobile-router
  *
@@ -227,7 +227,7 @@ $(document).bind("mobileinit",function(){
 						handleFn=_self.userHandlers[handler];
 					}
 					if (handleFn){
-						try { handleFn(e.type,res,ui,page,e); bHandled = true;
+						try { handleFn.apply(_self.userHandlers, [e.type,res,ui,page,e]); bHandled = true;
 						}catch(err){ debug(err); }
 					}
 				}
@@ -236,7 +236,7 @@ $(document).bind("mobileinit",function(){
 			if (!bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type]) {
 				if (typeof(this.conf.defaultHandler) == "function") {
 					try {
-						this.conf.defaultHandler(e.type, ui, page, e);
+						this.conf.defaultHandler.apply(_self.userHandlers, [e.type, ui, page, e]);
 					} catch(err) { debug(err); }
 				}
 			}
