@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+        <head>
+        <title>Page Title</title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+        <script type="text/javascript">
+	var router=new $.mobile.Router({
+		"#localpage2(?:[?/](.*))?": {
+			handler: "localpage", events: "bc,c,i,bs,s,bh,h"
+		},
+		"#index": { handler: function(type){
+			console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
+		}, events: "h,s" }
+	},{
+		localpage: function(type,match,ui){
+			console.log("localpage2: "+type);
+			console.log(match);
+		}
+	}); 
+	$(function(){
+		$(".hooklink").bind("click",function(e){
+			e.preventDefault(); e.stopPropagation();
+			console.log("Invoking changePage programmatically");
+			$.mobile.changePage( $( $(this).attr("href") ) );
+		});
+	});
+        </script>
+</head>
+
+<body>
+
+<div data-role="page" id="index">
+        <div data-role="header">
+                <h1>Index</h1>
+        </div>
+
+        <div data-role="content">
+                <p>Page 1</p>
+                <p>The output of this page can be seen in your javascript console.</p>
+                <p>
+                        <a class="hooklink" href="#localpage2">#localpage2 without params (not supported by programmatic changePage with jquery objects in a multipage template)</a><br/>
+                </p>
+        </div>
+
+        <div data-role="footer">
+                <h4>Index footer</h4>
+        </div>
+</div>
+
+
+<div data-role="page" id="localpage2" data-add-back-btn="true">
+        <div data-role="header">
+                <h1>Localpage 2</h1>
+        </div>
+
+        <div data-role="content">
+                <p>This is the localpage 2 in the multipage template.</p>
+                <p><a class="hooklink" href="#index">Back to index</a></p>
+        </div>
+
+        <div data-role="footer">
+                <h4>Localpage 2 Footer</h4>
+        </div>
+</div>
+
+</body>
+
+</html>
