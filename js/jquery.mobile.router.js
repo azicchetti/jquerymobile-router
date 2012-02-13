@@ -187,8 +187,10 @@ $(document).bind("mobileinit",function(){
 				"pagebeforehide":true, "pagehide":true, "pageremove": true
 			}){
 				refUrl=previousUrl;
+                previousUrl = undefined;
 			} else {
 				refUrl=nextUrl;
+                nextUrl = undefined;
 			}
 			do {
 				if (!refUrl){
