@@ -37,37 +37,35 @@ $(document).bind("mobileinit",function(){
 	var previousUrl=null, nextUrl=null;
 
 	$(document).bind("pagebeforechange", function( e, data ) {
-		// We only want to handle changePage() calls where the caller is
-		// asking us to load a page by URL.
-		if ( typeof data.toPage === "string" ) {
-			// We are being asked to load a page by URL, but we only
-			// want to handle URLs that request the data for a specific
-			// category.
-			var u = $.mobile.path.parseUrl( data.toPage );
-			previousUrl=nextUrl;
-			nextUrl=u;
+		var toPage=( typeof data.toPage === "string" ) ? data.toPage : data.toPage.jqmData("url")||"";
 
-			if ( u.hash.indexOf("?") !== -1 ) {
-				var page=u.hash.replace( /\?.*$/, "" );
-				// We don't want the data-url of the page we just modified
-				// to be the url that shows up in the browser's location field,
-				// so set the dataUrl option to the URL with hash parameters
-				data.options.dataUrl = u.href;
-				// Now call changePage() and tell it to switch to
-				// the page we just modified, but only in case it's different
-				// from the current page
-				if (	$.mobile.activePage &&
-					page.replace(/^#/,"")==$.mobile.activePage.jqmData("url")
-				){
-					data.options.allowSamePageTransition=true;
-					$.mobile.changePage( $(page), data.options );
-				} else {
-					$.mobile.changePage( $(page), data.options );
-				}
-				// Make sure to tell changePage() we've handled this call so it doesn't
-				// have to do anything.
-				e.preventDefault();
+		if ( data.options.hasOwnProperty("_jqmrouter_handled") ){ return; }
+		data.options._jqmrouter_handled = true;
+
+		var u = $.mobile.path.parseUrl( toPage );
+		previousUrl=nextUrl;
+		nextUrl=u;
+
+		if ( u.hash.indexOf("?") !== -1 ) {
+			var page=u.hash.replace( /\?.*$/, "" );
+			// We don't want the data-url of the page we just modified
+			// to be the url that shows up in the browser's location field,
+			// so set the dataUrl option to the URL with hash parameters
+			data.options.dataUrl = u.href;
+			// Now call changePage() and tell it to switch to
+			// the page we just modified, but only in case it's different
+			// from the current page
+			if (	$.mobile.activePage &&
+				page.replace(/^#/,"")==$.mobile.activePage.jqmData("url")
+			){
+				data.options.allowSamePageTransition=true;
+				$.mobile.changePage( $(page), data.options );
+			} else {
+				$.mobile.changePage( $(page), data.options );
 			}
+			// Make sure to tell changePage() we've handled this call so it doesn't
+			// have to do anything.
+			e.preventDefault();
 		}
 	});
 

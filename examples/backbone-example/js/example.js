@@ -15,7 +15,7 @@ var DetailView=Backbone.View.extend({
 		if (!this.options.detailId) return;
 		var reqInstance=this.model.get(this.options.detailId);
 		if (!reqInstance) return; /* mhm? */
-		this.el.html( this.template(reqInstance.toJSON()) );
+		this.$el.html( this.template(reqInstance.toJSON()) );
 		return this;
 	}
 });
@@ -42,12 +42,8 @@ C.renderDetail=function(type,match,ui){
 };
 
 
-C.renderForm = function (type, match, ui) {
-    console.log('renderForm - #dynForm id: ' + C.router.getParams(match[1]).formId);
-};
-
 C.renderPage = function (type, match, ui) {
-    console.log('render Page - #dynForm id: ' + type, 'match: ' + match);
+	console.log('render Page - ' + type, 'match: ' + match);
 };
 
 C.router=new $.mobile.Router({
@@ -55,11 +51,8 @@ C.router=new $.mobile.Router({
 	"#detail([?].*)?": {
 		handler: C.renderDetail, events: "bs"
 	},
-    "#dynForm([?].*)?" : {
-        handler : C.renderForm, events : "bs"
-    },
-    ".": {
-        handler: C.renderPage, events: "bc"
-    }
+	".": {
+		handler: C.renderPage, events: "bc"
+	}
 });
 
