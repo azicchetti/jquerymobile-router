@@ -171,12 +171,14 @@ $(document).bind("mobileinit",function(){
 				}
 				this._detachEvents();
 				if (evtList.length>0){
-					this._liveData={
+					this._eventData={
 						events: evtList.join(" "),
+						selectors: ":jqmData(role='page'),:jqmData(role='dialog')",
 						handler: function(e,ui){ _self._processRoutes(e,ui,this); }
 					};
-					$(":jqmData(role='page'),:jqmData(role='dialog')").live(
-						this._liveData.events, this._liveData.handler
+					$(document).delegate(
+						this._eventData.selectors,
+						this._eventData.events, this._eventData.handler
 					);
 				}
 			}
@@ -244,9 +246,10 @@ $(document).bind("mobileinit",function(){
 		},
 
 		_detachEvents: function(){
-			if (this._liveData){
-				$(":jqmData(role='page'),:jqmData(role='dialog')").die(
-					this._liveData.events, this._liveData.handler
+			if (this._eventData){
+				$(document).undelegate(
+					this._eventData.selectors,
+					this._eventData.events, this._eventData.handler
 				);
 			}
 		} ,
