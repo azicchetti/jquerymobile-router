@@ -103,9 +103,13 @@ $(document).bind("mobileinit",function(){
 			pagebeforecreate: null, pagecreate: null,
 			pagebeforeshow: null, pageshow: null,
 			pagebeforehide: null, pagehide: null,
-			pageinit: null, pageremove: null
+			pageinit: null, pageremove: null,
+			pagebeforechange: null, pagebeforeload: null,
+			pageload: null
 		};
 		this.evtLookup = {
+			bC: "pagebeforechange", bl: "pagebeforeload",
+			l: "pageload",
 			bc: "pagebeforecreate", c: "pagecreate",
 			bs: "pagebeforeshow", s: "pageshow",
 			bh: "pagebeforehide", h: "pagehide",
@@ -123,13 +127,15 @@ $(document).bind("mobileinit",function(){
 		this.add(userRoutes,userHandlers);
 	}
 	$.extend($.mobile.Router.prototype,{
-		add: function(userRoutes,userHandlers){
+		documentEvts: { pagebeforechange:1, pagebeforeload:1, pageload:1 },
+
+		add: function(userRoutes,userHandlers,_skipAttach){
 			if (!userRoutes) return;
 
-			var _self=this, evtList=[];
+			var _self=this, evtList=[], docEvtList=[];
 			if (userRoutes instanceof Array){
 				$.each(userRoutes,$.proxy(function(k,v){
-					this.add(v,userHandlers);
+					this.add(v,userHandlers,true);
 				},this));
 			} else {
 				$.each(userRoutes,function(r,el){
@@ -159,28 +165,41 @@ $(document).bind("mobileinit",function(){
 						}
 					}
 				});
-				$.each(_self.routes,function(evt,el){
-					if (el!==null){
+			}
+			if (_skipAttach===true) return;
+			if (!this.userHandlers){
+				this.userHandlers=userHandlers||{};
+			} else {
+				$.extend(this.userHandlers,userHandlers||{});
+			}
+			$.each(_self.routes,function(evt,el){
+				if (el!==null){
+					if (!_self.documentEvts[evt]){
 						evtList.push(evt);
+					} else {
+						docEvtList.push(evt);
 					}
-				});
-				if (!this.userHandlers){
-					this.userHandlers=userHandlers||{};
-				} else {
-					$.extend(this.userHandlers,userHandlers||{});
 				}
-				this._detachEvents();
-				if (evtList.length>0){
-					this._eventData={
-						events: evtList.join(" "),
-						selectors: ":jqmData(role='page'),:jqmData(role='dialog')",
-						handler: function(e,ui){ _self._processRoutes(e,ui,this); }
-					};
-					$(document).delegate(
-						this._eventData.selectors,
-						this._eventData.events, this._eventData.handler
-					);
-				}
+			});
+			this._detachEvents();
+			var routeHandler=function(e,ui){ _self._processRoutes(e,ui,this); };
+			if (evtList.length>0){
+				this._eventData={
+					events: evtList.join(" "),
+					selectors: ":jqmData(role='page'),:jqmData(role='dialog')",
+					handler: routeHandler
+				};
+				$(document).delegate(
+					this._eventData.selectors,
+					this._eventData.events, this._eventData.handler
+				);
+			}
+			if (docEvtList.length>0){
+				this._docEventData={
+					events: docEvtList.join(" "),
+					handler: routeHandler
+				};
+				$(document).bind(this._docEventData.events, this._docEventData.handler);
 			}
 		},
 
@@ -203,7 +222,7 @@ $(document).bind("mobileinit",function(){
 							refUrl=$.mobile.path.parseUrl(refUrl);
 						}
 					}
-				} else if (page && !$(page).jqmData("url")){
+				} else if (!this.documentEvts[e.type] && page && !$(page).jqmData("url")){
 					return;
 				}
 				if (!refUrl) return;
@@ -251,6 +270,9 @@ $(document).bind("mobileinit",function(){
 					this._eventData.selectors,
 					this._eventData.events, this._eventData.handler
 				);
+			}
+			if (this._docEventData){
+				$(document).unbind(this._eventData.events, this._eventData.handler);
 			}
 		} ,
 
