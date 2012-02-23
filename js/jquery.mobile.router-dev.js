@@ -272,7 +272,7 @@ $(document).bind("mobileinit",function(){
 				);
 			}
 			if (this._docEventData){
-				$(document).unbind(this._eventData.events, this._eventData.handler);
+				$(document).unbind(this._docEventData.events, this._docEventData.handler);
 			}
 		} ,
 
