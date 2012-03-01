@@ -28,6 +28,7 @@ In addition, if you want to use standard hashchange-based routers, you have to d
 
 What's new in the latest versions
 =====================
+* Added a parameter in the configuration object to execute only the first route handler found
 * Support for a different syntax defining your routes
 * Added a nice getParams() function to actually 'parse' parameters in the hash and get
 a simple object to play with them.
@@ -345,6 +346,8 @@ jQuery Mobile Router supports the following parameters:
 *`ajaxApp`: tells the plugin to use the full page path for its matches instead of
 		 the hash part of the url
 
+*`firstMatchOnly`: stop searching for other route matches once the first one has been found
+		(only the first handler is executed). Defaults to false 
 
 *`defaultHandler`: a function reference or a function name to be called when no matchin
 		route is found

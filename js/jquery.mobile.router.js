@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v0.7
+ * jQueryMobile-router v0.8
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011 (c) Andrea Zicchetti
@@ -25,7 +25,8 @@ $(document).bind("mobileinit",function(){
 	*/
 
 	var config=$.extend({
-		fixFirstPageDataUrl: false, firstPageDataUrl: "index.html", ajaxApp: false
+		fixFirstPageDataUrl: false, firstPageDataUrl: "index.html",
+		ajaxApp: false, firstMatchOnly: false
 	},$.mobile.jqmRouter || {});
 
 
@@ -230,10 +231,12 @@ $(document).bind("mobileinit",function(){
 						handleFn=_self.userHandlers[handler];
 					}
 					if (handleFn){
-						try { handleFn.apply(_self.userHandlers, [e.type,res,ui,page,e]); bHandled = true;
+						try { handleFn.apply(_self.userHandlers, [e.type,res,ui,page,e]);
+							bHandled = true;
 						}catch(err){ debug(err); }
 					}
 				}
+				if (bHandled && _self.conf.firstMatchOnly) return false;
 			});
 			//Pass to default if specified and can handle this event type
 			if (!bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type]) {
