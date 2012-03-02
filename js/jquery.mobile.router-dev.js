@@ -7,7 +7,13 @@
  * http://github.com/azicchetti/jquerymobile-router/blob/master/MIT-LICENSE.txt
  * http://github.com/azicchetti/jquerymobile-router/blob/master/GPL-LICENSE.txt
  */
-(function($){
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else {
+    factory(jQuery);
+  }
+}(this, function ($) {
 
 $(document).bind("mobileinit",function(){
 
@@ -290,13 +296,14 @@ $(document).bind("mobileinit",function(){
 			var tokens=hashparams.slice( hashparams.indexOf('?')+1 ).split("&");
 			$.each(tokens,function(k,v){
 				tmp=v.split("=");
+				tmp[0]=decodeURIComponent(tmp[0]);
 				if (params[tmp[0]]){
 					if (!(params[tmp[0]] instanceof Array)){
 						params[tmp[0]]=[ params[tmp[0]] ];
 					}
-					params[tmp[0]].push(tmp[1]);
+					params[tmp[0]].push( decodeURIComponent(tmp[1]) );
 				} else {
-					params[tmp[0]]=tmp[1];
+					params[tmp[0]]=decodeURIComponent(tmp[1]);
 				}
 			});
 			if ($.isEmptyObject(params)) return null;
@@ -305,5 +312,6 @@ $(document).bind("mobileinit",function(){
 	});
 
 });
+return {};
 
-})(jQuery);
+}));

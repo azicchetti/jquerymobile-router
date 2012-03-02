@@ -21,7 +21,8 @@
 	},{
 		ajaxPage: function(type,match,ui){
 			console.log("ajaxPage: "+type);
-			console.log(match);
+			var params=router.getParams(match[1]);
+			console.log(params);
 		}
 	}, { 
 		defaultHandler: function(type, ui, page) {
@@ -49,8 +50,8 @@
                 <p>The output of this page can be seen in your javascript console.</p>
                 <p>
                         <a href="__subTestAjax.html">Ajax Page</a><br/>
-                        <a href="__subTestAjax.html?foo=bar&bar=foo">
-                                Ajax Page with params v1
+                        <a href="__subTestAjax.html?foo=bar&bar=foo&testarray[]=foo&testarray[]=bar">
+                                Ajax Page with params 
                         </a><br/>
                 </p>
         </div>
