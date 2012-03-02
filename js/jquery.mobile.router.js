@@ -272,9 +272,9 @@ $(document).bind("mobileinit",function(){
 					if (!(params[tmp[0]] instanceof Array)){
 						params[tmp[0]]=[ params[tmp[0]] ];
 					}
-					params[tmp[0]].push(tmp[1]);
+					params[tmp[0]].push(decodeURIComponent(tmp[1]));
 				} else {
-					params[tmp[0]]=tmp[1];
+					params[tmp[0]]=decodeURIComponent(tmp[1]);
 				}
 			});
 			if ($.isEmptyObject(params)) return null;
