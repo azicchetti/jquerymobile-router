@@ -20,7 +20,7 @@
 		"/__subTestAjax3.html": {handler: "ajaxPage", events: "rm"}
 	},{
 		ajaxPage: function(type,match,ui){
-			console.log("ajaxPage: "+type);
+			console.log("ajaxPage: "+type+" "+match[0]);
 			var params=router.getParams(match[1]);
 			console.log(params);
 		}
