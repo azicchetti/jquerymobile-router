@@ -73,6 +73,7 @@ $(document).bind("mobileinit",function(){
 			// Make sure to tell changePage() we've handled this call so it doesn't
 			// have to do anything.
 			e.preventDefault();
+			$.mobile.urlHistory.ignoreNextHashChange=true;
 		}
 	});
 
