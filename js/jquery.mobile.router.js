@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v0.8
+ * jQueryMobile-router v0.81
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011 (c) Andrea Zicchetti
@@ -72,6 +72,7 @@
         // Make sure to tell changePage() we've handled this call so it doesn't
         // have to do anything.
         e.preventDefault();
+	$.mobile.urlHistory.ignoreNextHashChange=true;
       }
     });
 
