@@ -28,6 +28,7 @@ In addition, if you want to use standard hashchange-based routers, you have to d
 
 What's new in the latest versions
 =====================
+* support for pagebeforechange, pagebeforeload, pageload
 * Added a parameter in the configuration object to execute only the first route handler found
 * Support for a different syntax defining your routes
 * Added a nice getParams() function to actually 'parse' parameters in the hash and get
@@ -300,6 +301,42 @@ Your handlers will be called with the following arguments:
 * evt: the original event that comes from jquery mobile. You can use this to
 	prevent the default behaviour and, for instance, stop a certain page from being
 	removed from the dom during the pageremove event.
+
+
+Common mistakes
+--------------
+jQuery Mobile is a wonderful framework and it seems really easy to use at first.
+While this may be true for server-side generated mobile pages, things are very different
+once you have to do a full client-side web application, using backbone.js or spine.js and
+possibly Phonegap/Cordova.
+
+The whole hash handling performed by jQuery Mobile may be confusing, dynamic page loading/injection
+must be understood in order to be successfully exploited, and you should also know the jQM
+event system to have a fine grained control over page switching.
+
+Here is a list of things you should check when you're in trouble, based on my experience but,
+more importantly, on the email I've received from other users of the jQM router.
+
+* the router should be instantiated as soon as possible, possibly just after loading jquery mobile.
+This ensures that even the first pageinit event can be catched and handled by the router
+
+* please make sure that the router is not instantiated multiple times by mistake. This will lead to
+routes being fired twice, at least
+
+* do not call $.mobile.changePage during a page transition with the destination page being the one
+the framework is already transitioning to.
+That is to say, if you click on a link to #foo and you have a pagebeforeshow route bound to it,
+DO NOT invoke $.mobile.changePage("#foo") in your handler (the result will be an epic failure due to
+a bug in jquery mobile)
+
+* DOUBLE CHECK your REGULAR EXPRESSIONS! A typical mistake is forgetting the $ operator.
+If you have two pages, such as #product and #productList, a hypothetical route "#product" would
+match both pages, leading to unexpected behaviors. Use the $ operator when unsure: "#product$"
+
+* use setTimeout to avoid doing time-consuming tasks in a page-transition handler. If you have
+a route bound to pagebeforeshow (or even other events) and your code takes too much to execute
+(for instance, very long foreach loops, synchronous ajax calls, complex manupulations
+of markers in a google map), jquery mobile may throw an error.
 
 
 Public methods

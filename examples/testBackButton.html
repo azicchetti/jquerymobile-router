@@ -1,0 +1,58 @@
+<html>
+<head>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<script>
+var actions = {
+    showSite: function(eventType, matchObj, ui, page, evt) {
+	console.log('showSite');
+	console.log(matchObj);
+    },
+    showSection: function(eventType, matchObj, ui, page, evt) {
+	console.log('showSection');
+	console.log(matchObj);
+    },
+    showChunk: function(eventType, matchObj, ui, page, evt) {
+	console.log('showChunk');
+	console.log(matchObj);
+    }
+};
+
+
+new $.mobile.Router(
+{
+    "#site": { handler: "showSite", events: "bs" },
+    "#section([?].*)?": { handler: "showSection", events: "bs" },
+    "#chunk([?].*)?": { handler: "showChunk", events: "bs" },
+},
+actions);
+</script>
+</head>
+
+<body>
+<div id="site" data-role="page" data-add-back-btn="true">
+    <div data-role="header"><h1>Site</h1></div>
+    <div data-role="content">
+        <ul data-role="listview">
+            <li><a href="#section?id=1">Section 1</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="section" data-role="page" data-add-back-btn="true">
+    <div data-role="header"><h1>Section</h1></div>
+    <div data-role="content">
+        <ul data-role="listview">
+             <li><a href="#chunk?id=1">Chunk 1</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="chunk" data-role="page" data-add-back-btn="true">
+    <div data-role="header"><h1>Chunk</h1></div>
+    <div data-role="content"></div>
+</div>
+</body>
+</html>
