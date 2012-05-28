@@ -177,6 +177,10 @@ Please refer to the following schema to understand event codes (it's really stra
 		bh	=> pagebeforehide
 		h	=> pagehide
 		rm	=> pageremove
+		bC	=> pagebeforechange
+		bl	=> pagebeforeload
+		l	=> pageload
+
 ```
 
 * The above syntax, however, doesn't let one use the same regular expression to call different handlers (this is due to the fact that the regexp is a key into an hashmap,
