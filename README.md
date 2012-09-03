@@ -28,6 +28,7 @@ In addition, if you want to use standard hashchange-based routers, you have to d
 
 What's new in the latest versions
 =====================
+* Form parameters are now correctly handled
 * support for pagebeforechange, pagebeforeload, pageload
 * Added a parameter in the configuration object to execute only the first route handler found
 * Support for a different syntax defining your routes
@@ -327,11 +328,21 @@ This ensures that even the first pageinit event can be catched and handled by th
 * please make sure that the router is not instantiated multiple times by mistake. This will lead to
 routes being fired twice, at least
 
+* do not assign id's to page divs, unless you're using a single-file multipage template. In fact,
+ids will interfere with data-url generation (at jquery mobile level) in ajax applications
+
 * do not call $.mobile.changePage during a page transition with the destination page being the one
 the framework is already transitioning to.
 That is to say, if you click on a link to #foo and you have a pagebeforeshow route bound to it,
 DO NOT invoke $.mobile.changePage("#foo") in your handler (the result will be an epic failure due to
 a bug in jquery mobile)
+
+* pay attention to the ORDER in which events are fired. Remember that pagebeforeshow is fired *before*
+pagebeforehide, so if you're cleaning the dom when the page is being hidden and do your rendering stuff
+in pagebeforeshow, you have to be careful during same-page transitions or you'll get a blank page.
+You can use a certain counter (incremented during *show events and decremented during the hiding) and
+clean the dom only when it's 0, or examine window.location, or (better) use the "ui" argument passed to
+the handler (.nextPage is the property that you need)
 
 * DOUBLE CHECK your REGULAR EXPRESSIONS! A typical mistake is forgetting the $ operator.
 If you have two pages, such as #product and #productList, a hypothetical route "#product" would

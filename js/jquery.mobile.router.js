@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v0.9
+ * jQueryMobile-router v0.93
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011 (c) Andrea Zicchetti
@@ -48,12 +48,17 @@ $(document).bind("mobileinit",function(){
 
 		if ( data.options.hasOwnProperty("_jqmrouter_handled") ){ return; }
 		data.options._jqmrouter_handled = true;
-
+		// handle form submissions
+		if (data.options.data && (data.options.type+"").toLowerCase()=="get"){
+			toPage+="?"+data.options.data;
+		}
 		var u = $.mobile.path.parseUrl( toPage );
 		previousUrl=nextUrl;
 		nextUrl=u;
 
-		if ( u.hash.indexOf("?") !== -1 ) {
+		if ( 	u.hash.indexOf("?") !== -1 ||
+			(u.hash.length>0 && previousUrl!==null && previousUrl.hash.indexOf(u.hash+"?")!==-1)
+		) {
 			var page=u.hash.replace( /\?.*$/, "" );
 			// We don't want the data-url of the page we just modified
 			// to be the url that shows up in the browser's location field,
