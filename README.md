@@ -67,7 +67,7 @@ provided with a bunch of useful arguments.
 When you define a route, you'll provide:
 
 * a regular expression to test the url/hash against
-* an handler (a function)
+* a handler (a function)
 * when your handler must be called (for example, you may decide to setup a route only when the pagecreate and pagebeforeshow jQM events are dispatched)
 
 
