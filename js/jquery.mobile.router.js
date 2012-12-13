@@ -38,7 +38,10 @@ $(document).bind("mobileinit",function(){
 
 	var DEBUG=true;
 	function debug(err){
-		if (DEBUG) console.log(err);
+          if (DEBUG) {
+            console.log(err);
+            if (err.stack) console.log(err.stack)
+          }
 	}
 
 	var previousUrl=null, nextUrl=null, ignoreNext=false;
