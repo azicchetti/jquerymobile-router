@@ -28,6 +28,8 @@ In addition, if you want to use standard hashchange-based routers, you have to d
 
 What's new in the latest versions
 =====================
+* Support for jQM 1.3.0. Older jQM version are still supported in the legacy version
+  (jquery.mobile.router-legacy.js)
 * Form parameters are now correctly handled
 * support for pagebeforechange, pagebeforeload, pageload
 * Added a parameter in the configuration object to execute only the first route handler found
