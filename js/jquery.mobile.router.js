@@ -57,6 +57,10 @@ $(document).on("mobileinit", function(){
     previousUrl = nextUrl;
     nextUrl = u;
 
+    if (u.hash.indexOf("?") != -1){
+      data.options.dataUrl = u.hash.replace(/^#/,"");
+    }
+
     // conditions to possibly set allowSamePageTransitions: we have a "?" or we're transitioning from
     //  #foo?params to #foo
     var noparamsRE = /^#|\?.*$/g;
