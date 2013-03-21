@@ -2,66 +2,63 @@
 <html>
         <head>
         <title>Page Title</title>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
         <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
-        <script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
         <script type="text/javascript">
-	var router=new $.mobile.Router([
-		{ "#localpage2(?:[?/](.*))?": {handler: "localpageA", events: "bc,c,i"} },
-		{ "#localpage2(?:[?/](.*))?": {handler: "localpageB", events: "bs,s"} },
-		{ "#localpage2(?:[?/](.*))?": {handler: "localpageC", events: "bh,h"} },
-		{ "#index": { handler: function(type){
-				console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
-			}, events: "h,s" }
-		}
-	],{
-                localpageA: function(type,match,ui){
-			var params=router.getParams(match[1]);
-			console.log("localpage function A: "+type);
-			console.log(params);
-                },
-                localpageB: function(type,match,ui){
-			var params=router.getParams(match[1]);
-			console.log("localpage function B: "+type);
-			console.log(params);
-                },
-                localpageC: function(type,match,ui){
-			var params=router.getParams(match[1]);
-			console.log("localpage function C: "+type);
-			console.log(params);
-                }
-	},{ 
-		defaultHandler: function(type, ui, page) {
-			console.log("Default handler called due to unknown route (" 
-				+ type + ", " + ui + ", " + page + ")");
-		},
-		defaultHandlerEvents: "s"
-	});
+        var router=new $.mobile.Router([
+          { "#localpage2(?:[?/](.*))?": { handler: "localpageA", events: "bc,c,i" } },
+          { "#localpage2(?:[?/](.*))?": { handler: "localpageB", events: "bs,s" } },
+          { "#localpage2(?:[?/](.*))?": { handler: "localpageC", events: "bh,h" } },
+          { "#index": {
+              handler: function(type){
+                console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
+              },
+              events: "h,s" }
+          }
+        ], {
+          localpageA: function(type,match,ui){
+            var params=router.getParams(match[1]);
+            console.log("localpage function A: "+type);
+            console.log(params);
+          },
+          localpageB: function(type,match,ui){
+            var params=router.getParams(match[1]);
+            console.log("localpage function B: "+type);
+            console.log(params);
+          },
+          localpageC: function(type,match,ui){
+            var params=router.getParams(match[1]);
+            console.log("localpage function C: "+type);
+            console.log(params);
+          }
+        }, { 
+          defaultHandler: function(type, ui, page) {
+            console.log("Default handler called due to unknown route (" 
+              + type + ", " + ui + ", " + page + ")");
+          },
+          defaultHandlerEvents: "s"
+        });
 
         setTimeout(function(){
-        	alert("adding a dynamic route to localpage3...");
-		router.add([
-			{ "#localpage3(?:[?/](.*))?": {handler: "localpage3Shown", events: "s"} },
-			{ "#localpage3(?:[?/](.*))?": {handler: "localpage3Hidden", events: "h"} }
-		],{
-	 		localpage3Shown: function(type,match){
-				var params=router.getParams(match[1]);
-				console.log("localpage3 shown");
-				console.log(params);
-		    	},
-	 		localpage3Hidden: function(type,match){
-				var params=router.getParams(match[1]);
-				console.log("localpage3 hidden");
-				console.log(params);
-		    	}
-		});
-        },20000);
-
-	setTimeout(function(){
-		alert("deactivating router...");
-		router.destroy();
-	},120000);
+          alert("adding a dynamic route to localpage3...");
+          router.add([
+            { "#localpage3(?:[?/](.*))?": { handler: "localpage3Shown", events: "s" } },
+            { "#localpage3(?:[?/](.*))?": { handler: "localpage3Hidden", events: "h" } }
+          ],{
+            localpage3Shown: function(type,match){
+              var params=router.getParams(match[1]);
+              console.log("localpage3 shown");
+              console.log(params);
+            },
+            localpage3Hidden: function(type,match){
+              var params=router.getParams(match[1]);
+              console.log("localpage3 hidden");
+              console.log(params);
+            }
+          });
+        }, 20000);
         </script>
 </head>
 
