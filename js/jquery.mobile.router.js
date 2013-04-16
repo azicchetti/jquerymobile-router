@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v20130301
+ * jQueryMobile-router v20130416
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011-2013 (c) Andrea Zicchetti
@@ -261,8 +261,13 @@ $(document).on("mobileinit", function(){
       if ( !bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type] ) {
         if ( typeof(this.conf.defaultHandler) == "function" ) {
           try {
-            this.conf.defaultHandler.apply(_self.userHandlers, [e.type, ui, page, e]);
+            this.conf.defaultHandler.apply(this.userHandlers, [e.type, ui, page, e]);
           } catch(err) { debug(err); }
+        } else if ( typeof(this.userHandlers[this.conf.defaultHandler]) == "function" ) {
+            var handleFn = this.userHandlers[this.conf.defaultHandler];
+            try {
+              handleFn.apply(this.userHandlers, [e.type, ui, page, e]);
+            } catch(err){ debug(err); }
         }
       }
     },

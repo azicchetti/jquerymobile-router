@@ -403,8 +403,9 @@ jQuery Mobile Router supports the following parameters:
 *`firstMatchOnly`: stop searching for other route matches once the first one has been found
 		(only the first handler is executed). Defaults to false 
 
-*`defaultHandler`: a function reference or a function name to be called when no matchin
-		route is found
+*`defaultHandler`: a function reference or a function name to be called when no matching
+		route is found. You MUST also define the `defaultHandlerEvents` property when using
+    this one
 
 *`defaultHandlerEvents`: the defaultHandler will be called for these events, if
 		no routes are matched. Please note that THESE EVENTS MUST BE DEFINED 
