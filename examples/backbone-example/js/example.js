@@ -8,13 +8,14 @@ var DetailView=Backbone.View.extend({
 	template: _.template('<div class="id">Id: <%= id %></div><div class="title">Titolo: <%= title %></div><div class="text">Testo: <%= text %></div>'),
 
 	initialize: function(){
-		this.model.bind("reset",this.render,this);
+		this.listenTo(this.model, "reset", this.render);
 	},
 
 	render: function(){
-		if (!this.options.detailId) return;
+		if (!this.options.detailId){ return; }
+		// very bad backbone usage here, but it works enough for an example
 		var reqInstance=this.model.get(this.options.detailId);
-		if (!reqInstance) return; /* mhm? */
+		if (!reqInstance){ return; /* mhm? */ }
 		this.$el.html( this.template(reqInstance.toJSON()) );
 		return this;
 	}
@@ -23,19 +24,22 @@ var DetailView=Backbone.View.extend({
 
 M.data=new Data();
 
-C.renderDetail=function(type,match,ui){
-	if (!match) return;
+C.renderDetail=function(type, match, ui, page){
+	if (!match){
+		return;
+	}
 	if (!V.detail){
 		V.detail=new DetailView({
-			model: M.data, detailId: null, el: $("#detail :jqmData(role='content')")
+			model: M.data, detailId: null, el: $(page).find(":jqmData(role='content')")
 		});
 	}
 	var params=C.router.getParams(match[1]);
 	if (params){
+		// bad backbone usage here
 		V.detail.options.detailId=params.id;
 	}
 	if (M.data.isEmpty()){
-		M.data.fetch();
+		M.data.fetch({ reset: true });
 	} else {
 		V.detail.render();
 	}
@@ -47,7 +51,9 @@ C.renderPage = function (type, match, ui) {
 };
 
 C.router=new $.mobile.Router({
-	"#index": function(){ console.log("INDEX!"); },
+	"#index": function(){
+		console.log("INDEX!");
+	},
 	"#detail([?].*)?": {
 		handler: C.renderDetail, events: "bs"
 	},
