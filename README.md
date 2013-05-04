@@ -28,6 +28,7 @@ In addition, if you want to use standard hashchange-based routers, you have to d
 
 What's new in the latest versions
 =====================
+* Added a "special" support for the pagebeforechange event, modeled after the pagebeforeload event
 * Support for jQM 1.3.0. Older jQM version are still supported in the legacy version
   (jquery.mobile.router-legacy.js)
 * Form parameters are now correctly handled
@@ -117,7 +118,7 @@ var router=new $.mobile.Router([
 	  Since writing an "empty" regular expression such as "^$" to match this page seems really
 	  strange, the router will accept *only* a route with the page id, for example "#foobar"
 
-* If you need to use backslashes (as in: \d, \s, etc) in your regular expressions, please make sure to escape them (\\\\d, \\\\s). You may test your regexp by using: "yourstring".match( new RegExp("regexp string") )
+* If you need to use backslashes (as in: \d, \s, etc) in your regular expressions, please make sure to escape them (\\\\d, \\\\s). You may test your regexp by using: "path to be matched".match( new RegExp("matching regexp") )
 
 
 
@@ -234,7 +235,7 @@ Choosing the right event
 -----------------
 In order to successfully exploit routing under jQuery Mobile, the developer should have
 at least a minimal knowledge of its event system (among other things!):
-http://jquerymobile.com/demos/1.0.1/docs/api/events.html
+http://api.jquerymobile.com/category/events/
 
 Once you're familiar with page change events, you can choose the right one in order to achieve
 the desired behaviour in your application.
@@ -250,7 +251,11 @@ For single-file multipage applications (you have an html file containing a lot o
 
  * pagebeforehide or pagehide:
 	These events are called every time a particular page is hidden.
-	You can use these events to clean views or models, to free resources and clean the DOM.
+	You can use these events to clean views or models, to free resources and clean the DOM
+
+ * pagebeforechange:
+	Use this event if you want to STOP the transition from happening until you resolve a certain deferred
+	object. There's a paragraph describing this technique below
 
 For ajax applications (multiple files containing a single jQM page):
 
@@ -308,6 +313,43 @@ Your handlers will be called with the following arguments:
 * evt: the original event that comes from jquery mobile. You can use this to
 	prevent the default behaviour and, for instance, stop a certain page from being
 	removed from the dom during the pageremove event.
+
+
+About pagebeforechange
+----------------------
+This is a special event withing jQuery Mobile, so it deserves a "special" support in the router.
+
+When you want to "stop" a certain transition until you've done something to the page, this is the
+right event to use. I guess this is the only scenario I can try to support with the router.
+Re-routing to another location seems to work as well, more on that later.
+
+I've modeled the way it works after the pagebeforeload event. So, when your bC route is matched,
+the transition is temporarily stopped, so that you can make your modifications to the page.
+
+The page reference is normalized by the router (you should know from the docs that pagebeforechange
+is invoked twice, the first time with a string and eventually with a jQuery object) so that you get
+a nice jQuery object as if it was a standard pagebeforeshow event.
+
+Take this simple handler as an example:
+```
+  beforeChangeHandler: function(type, match, ui, page, e){
+	console.log(page); // this is the page reference
+	console.log("Waiting 6 seconds before resolving the deferred...");
+	setTimeout(function(){
+		ui.bCDeferred.resolve();
+	},6000);
+  }
+```
+
+In order to continue the transition, YOU MUST CALL: ui.bCDeferred.resolve();
+
+Please DON'T call e.preventDefault() or $.mobile.changePage(...) in this handler, because the router
+does that for you, but if you're trying to achieve something different (that is to say, the scenario
+described above does not match your situation) you may have to bind to pagebeforechange yourself and
+implement your own logic.
+
+You can also change the ui.toPage property from your handler, in order to re-route the transition
+to another location. This seems to work but I've not tested it extensively, so use it with caution.
 
 
 Common mistakes

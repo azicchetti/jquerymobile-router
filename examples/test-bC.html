@@ -8,41 +8,21 @@
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
         <script type="text/javascript">
         var router=new $.mobile.Router({
-          "#localpage2(?:[?](.*))?": {handler: "localpage", events: "bc,c,i,bs,s,bh,h"},
+          "#localpage2(?:[?](.*))?": {handler: "localpage", events: "bC"},
           "#index": { handler: function(type){
             console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
           }, events: "h,s" }
         },{
-          localpage: function(type,match,ui){
-            console.log("localpage2: "+type+" "+match[0]);
-            var params=router.getParams(match[1]);
-            console.log(params);
+	  localpage: function(type,match,ui,page,e){
+		console.log(page);
+		// if you want to re-route the transition to #localpage4, uncomment the following line
+		//ui.toPage="#localpage4";
+		console.log("Waiting 6 seconds before resolving the deferred...");
+		setTimeout(function(){
+			ui.bCDeferred.resolve();
+		},6000);
           }
-        }, { 
-          defaultHandler: function(type, ui, page) {
-            console.log("Default handler called due to unknown route (" 
-              + type + ", " + ui + ", " + page + ")"
-            );
-          },
-          defaultHandlerEvents: "s"
         });
-
-        setTimeout(function(){
-          alert("adding a dynamic route to localpage3...");
-          router.add({
-            "#localpage3(?:[?/](.*))?": {handler: "localpage3", events: "s"}
-          },{
-            localpage3: function(type,match){
-              console.log("localpage3: "+type);
-              console.log(match);
-            }
-          });
-        },20000);
-
-        setTimeout(function(){
-          alert("deactivating router...");
-          router.destroy();
-        },120000);
         </script>
 </head>
 

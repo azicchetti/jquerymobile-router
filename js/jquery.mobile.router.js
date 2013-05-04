@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v20130416
+ * jQueryMobile-router v20130504
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011-2013 (c) Andrea Zicchetti
@@ -207,6 +207,16 @@ $(document).on("mobileinit", function(){
 
     _processRoutes: function(e,ui,page) {
       var _self=this, refUrl, url, $page, retry = 0;
+      if (e.type == "pagebeforechange"){
+	if ( typeof ui.toPage === "string" || ui.options._jqmrouter_bC ){
+	  // we won't support bC events fired with data.toPage != $(jQuery object) [because we want
+	  //   to pass the page reference to the handler]
+	  // we also have to return when _jqmrouter_bC is set to avoid loops
+          return;
+	}
+	// normalizing the "page" reference, we're sure that ui.toPage is a jQuery Object
+	page = ui.toPage;
+      }
       if ( e.type in { "pagebeforehide":true, "pagehide":true, "pageremove": true } ){
         refUrl = previousUrl;
       } else {
@@ -239,7 +249,7 @@ $(document).on("mobileinit", function(){
         retry ++;
       } while( url.length == 0 && retry <= 1 );
 
-      var bHandled = false;
+      var bHandled = false, bCDeferred = (e.type == "pagebeforechange" ? $.Deferred() : null);
       $.each(this.routes[e.type], function(route,handler){
         var res, handleFn;
         if ( (res = url.match(_self.routesRex[route])) ) {
@@ -250,6 +260,9 @@ $(document).on("mobileinit", function(){
           }
           if ( handleFn ){
             try {
+	      if (bCDeferred && ui){
+                ui.bCDeferred = bCDeferred;
+	      }
               handleFn.apply(_self.userHandlers, [e.type,res,ui,page,e]);
               bHandled = true;
             }catch(err){ debug(err); }
@@ -259,16 +272,25 @@ $(document).on("mobileinit", function(){
       });
       //Pass to default if specified and can handle this event type
       if ( !bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type] ) {
+        var handleFn;
         if ( typeof(this.conf.defaultHandler) == "function" ) {
-          try {
-            this.conf.defaultHandler.apply(this.userHandlers, [e.type, ui, page, e]);
-          } catch(err) { debug(err); }
+	  handleFn = this.conf.defaultHandler;
         } else if ( typeof(this.userHandlers[this.conf.defaultHandler]) == "function" ) {
-            var handleFn = this.userHandlers[this.conf.defaultHandler];
-            try {
-              handleFn.apply(this.userHandlers, [e.type, ui, page, e]);
-            } catch(err){ debug(err); }
+          handleFn = this.userHandlers[this.conf.defaultHandler];
         }
+	try {
+	  handleFn.apply(this.userHandlers, [e.type, ui, page, e]);
+	} catch(err){ debug(err); }
+      }
+
+      if (e.type=="pagebeforechange" && bHandled){
+        e.preventDefault();
+	bCDeferred.done(function(){
+	  // destination page is refUrl.href, ui.toPage or page.
+	  // I'm using ui.toPage so that really crazy users may try to re-route the transition to
+	  //   another location by modifying this property from the handler.
+	  $.mobile.changePage(ui.toPage, { _jqmrouter_handled: true, _jqmrouter_bC: true });
+	});
       }
     },
 
