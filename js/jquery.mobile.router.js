@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v20130504
+ * jQueryMobile-router v20130514
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011-2013 (c) Andrea Zicchetti
@@ -30,7 +30,7 @@ $(document).on("mobileinit", function(){
 
   var config = $.extend({
     fixFirstPageDataUrl: false, firstPageDataUrl: "index.html",
-    ajaxApp: false, firstMatchOnly: false
+    ajaxApp: false, firstMatchOnly: false, defaultArgsRe: false
   }, $.mobile.jqmRouter || {});
 
 
@@ -151,12 +151,18 @@ $(document).on("mobileinit", function(){
             if (_self.routes.pagebeforeshow === null){
               _self.routes.pagebeforeshow = {};
             }
+	    if (_self.conf.defaultArgsRe){
+	      r += '(?:[?](.*))?$';
+	    }
             _self.routes.pagebeforeshow[r] = el;
             if ( ! _self.routesRex.hasOwnProperty(r) ){
               _self.routesRex[r] = new RegExp(r);
             }
           } else {
             var i, trig = el.events.split(","), evt;
+	    if (el.argsre !== false && (el.argsre || _self.conf.defaultArgsRe) ){
+	      r += '(?:[?](.*))?$';
+	    }
             for( i = 0; i < trig.length; i++ ){
               evt = _self.evtLookup[trig[i]];
               if ( _self.routes.hasOwnProperty(evt) ){
@@ -289,7 +295,11 @@ $(document).on("mobileinit", function(){
 	  // destination page is refUrl.href, ui.toPage or page.
 	  // I'm using ui.toPage so that really crazy users may try to re-route the transition to
 	  //   another location by modifying this property from the handler.
-	  $.mobile.changePage(ui.toPage, { _jqmrouter_handled: true, _jqmrouter_bC: true });
+	  $.mobile.changePage(ui.toPage, {
+            _jqmrouter_handled: true,
+            _jqmrouter_bC: true,
+            dataUrl: ui.options.dataUrl
+          });
 	});
       }
     },

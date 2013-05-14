@@ -14,13 +14,17 @@
           }, events: "h,s" }
         },{
 	  localpage: function(type,match,ui,page,e){
+		console.log("pagebeforechange evt:");
+		console.log(match);
 		console.log(page);
-		// if you want to re-route the transition to #localpage4, uncomment the following line
+		// if you want to re-route the transition to #localpage4, uncomment the following 2 lines
 		//ui.toPage="#localpage4";
+		//ui.options.dataUrl="localpage4";
 		console.log("Waiting 6 seconds before resolving the deferred...");
 		setTimeout(function(){
 			ui.bCDeferred.resolve();
 		},6000);
+		console.log("---");
           }
         });
         </script>

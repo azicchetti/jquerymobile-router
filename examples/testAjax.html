@@ -8,14 +8,17 @@
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
         <script type="text/javascript">
         var router=new $.mobile.Router({
-          "/testAjax.html(?:[?](.*))?": {
-            handler: "ajaxPage", events: "bc,c,bs,s,h"
+          "/testAjax.html": {
+            handler: "ajaxPage", events: "bc,c,bs,s,h", argsre: true
           },
-          "/subdir/__subTestAjax.html(?:[?](.*))?": {
-            handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h"
+          "/subdir/__subTestAjax.html": {
+            handler: "ajaxPage", events: "bc,c,i,bs,s,bh,h", argsre: true
+          },
+          "/subdir/__subTestAjax2.html": {
+            handler: "ajaxPage", events: "bs", argsre: true
           },
           "/subdir/__subTestAjax3.html": {
-            handler: "ajaxPage", events: "rm"
+            handler: "ajaxPage", events: "rm", argsre: true
           }
         }, {
           ajaxPage: function(type,match,ui){
@@ -46,7 +49,7 @@
                 <p>The output of this page can be seen in your javascript console.</p>
                 <p>
                         <a href="subdir/__subTestAjax.html">Ajax Page</a><br/>
-                        <a href="subdir/__subTestAjax2.html">Ajax Page 2</a><br/>
+                        <a href="subdir/__subTestAjax2.html?foo=bar&bar=foo">Ajax Page 2 with params</a><br/>
                         <a href="subdir/__subTestAjaxNotExisting.html">Non existing Page</a><br/>
                         <a href="subdir/__subTestAjax.html?foo=bar&bar=foo&testarray[]=foo&testarray[]=bar">
                                 Ajax Page with params 

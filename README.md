@@ -89,17 +89,17 @@ Here are a few examples:
 ```javascript
 var router=new $.mobile.Router([
         { "/index.html": { events: "i", handler: "index" } },
-        { "/restaurant.html[?]id=(\\d+)": { events: "i", handler: "restaurantDetail" } },
-        { "/events.html(?:[?](.*))?": { events: "i", handler: "events" } },
-        { "/eventDetail.html(?:[?](.*))?": { events: "i", handler: "eventDetail" } },
-        { "/accomodations.html(?:[?](.*))?": { events: "i", handler: "accomodationsTaxonomy" } },
-        { "/accomodationList.html(?:[?](.*))?": { events: "i", handler: "accomodations" } }
+        { "/restaurant.html[?]id=(\\d+)": { events: "i", handler: "restaurantDetail" } }, // handwritten regexp
+        { "/events.html(?:[?](.*))?": { events: "i", handler: "events" } }, // handwritten regexp
+        { "/eventDetail.html": { events: "i", handler: "eventDetail", argsre: true } },
+        { "/accomodations.html": { events: "i", handler: "accomodationsTaxonomy", argsre: true } },
+        { "/accomodationList.html(?:[?](.*))?": { events: "i", handler: "accomodations" } } // handwritten regexp
 ], ControllerObject, { ajaxApp: true} );
 
 var router=new $.mobile.Router([
-        { "#ticketPlanner([?].*)?": "ticketPlannerShown" },
+        { "#ticketPlanner(?:[?](.*))?$": "ticketPlannerShown" },
         { "#ticketConfirm": "ticketConfirmShown" },
-        { "#ticketDetail([?].*)?": { handler: "ticketDetailPage", events: "bs,h" } },
+        { "#ticketDetail": { handler: "ticketDetailPage", events: "bs,h", argsre: true } },
         { "#ticketHistory": "ticketHistoryShown" },
         { "#map": { handler: "mapHidden", events: "bh" } },
         { "#map": { handler: "mapShown", events: "s" } }
@@ -118,7 +118,8 @@ var router=new $.mobile.Router([
 	  Since writing an "empty" regular expression such as "^$" to match this page seems really
 	  strange, the router will accept *only* a route with the page id, for example "#foobar"
 
-* If you need to use backslashes (as in: \d, \s, etc) in your regular expressions, please make sure to escape them (\\\\d, \\\\s). You may test your regexp by using: "path to be matched".match( new RegExp("matching regexp") )
+* If you need to use backslashes (as in: \d, \s, etc) in your regular expressions, please make sure to escape them (\\\\d, \\\\s). You may test your regexp by using: "path to be matched".match( new RegExp("matching regexp") ).
+ However, you'll hardly need to write any regular expression in your routes. If you want to match parameters, you should use the `argsre` property (or the `defaultArgsRe` configuration setting). See below for an explanation.
 
 
 
@@ -130,24 +131,24 @@ myRoutes object
 	  in the myHandlers object
 
 ```javascript		
-		{
-			"regularExpression": "handlerName",
+	{
+		"regularExpression": "handlerName",
 
-			/* or */
-			
-			"regularExpression": function(){
-				// your inline function here ...
-			}
-
-			/* or */
-			
-			"regularExpression": someobject.functionReference
+		/* or */
+		
+		"regularExpression": function(){
+			// your inline function here ...
 		}
+
+		/* or */
+		
+		"regularExpression": someobject.functionReference
+	}
 ```
 
 2. This is the full syntax to specify various jQM events you want your route to be
 	  bound to.
-	  The object defines an "handler" property with a string value: this is the name
+	  The object defines a "handler" property with a string value: this is the name
 	  of a function defined in the myHandlers object. Again, you may also put an inline
 	  function in the "handler" property instead of a string.
 	  The object also defines an "events" property with a string value: this is a list
@@ -155,35 +156,37 @@ myRoutes object
 	  these events are fired. 
 
 ```javascript	  
-		{
-			"regularExpression": { 
-				handler: "handlerName",
-				events: "bc,c,bs,s,bh,h"
-			},
+	{
+		"regularExpression": { 
+			handler: "handlerName",
+			events: "bc,c,bs,s,bh,h",
+			argsre: true  //a boolean, can be omitted if false. see below
+		},
 
-			/* or */
+		/* or */
 
-			"regularExpression": { 
-				handler: function(){ ... },
-				events: "bc,c,bs,s,bh,h"
-			},
-		}		
+		"regularExpression": { 
+			handler: function(){ ... },
+			events: "bc,c,bs,s,bh,h",
+			argsre: true  //a boolean, can be omitted if false. see below
+		},
+	}		
 ```
 
 Please refer to the following schema to understand event codes (it's really straightforward)
 
 ```javascript
-		bc	=> pagebeforecreate
-		c	=> pagecreate
-		i	=> pageinit
-		bs	=> pagebeforeshow
-		s	=> pageshow
-		bh	=> pagebeforehide
-		h	=> pagehide
-		rm	=> pageremove
-		bC	=> pagebeforechange
-		bl	=> pagebeforeload
-		l	=> pageload
+	bc	=> pagebeforecreate
+	c	=> pagecreate
+	i	=> pageinit
+	bs	=> pagebeforeshow
+	s	=> pageshow
+	bh	=> pagebeforehide
+	h	=> pagehide
+	rm	=> pageremove
+	bC	=> pagebeforechange
+	bl	=> pagebeforeload
+	l	=> pageload
 
 ```
 
@@ -193,16 +196,39 @@ Please refer to the following schema to understand event codes (it's really stra
 	  you could use the following syntax:
 
 ```javascript
-		var approuter=new $.mobile.Router([
-			{ "#certainPage": { handler: "foo", events: "s" } },
-			{ "#certainPage": { handler: "bar", events: "h" } }
-		], {
-			foo: function(...){...},
-			bar: function(...){...}
-		}, options);
+	var approuter=new $.mobile.Router([
+		{ "#certainPage": { handler: "foo", events: "s", argsre: true } },
+		{ "#certainPage": { handler: "bar", events: "h" } }
+	], {
+		foo: function(...){...},
+		bar: function(...){...}
+	}, options);
 ```
 
 By using an array, you can specify the **SAME REGULAR EXPRESSION** multiple times, but for **DIFFERENT EVENT TYPES**.
+
+
+The "argsre" property is a boolean setting you can use to automatically append:
+```
+	(?:[?](.*))?$
+```
+to the end of each regular expression.
+It's a really convenient way to:
+
+	1) avoid the most common mistake in using the router (forgetting the $ operator)
+	2) define a route that supports hash parameters
+	3) use the router even without knowing what a regular expression is
+
+You'll *hardly* need to write complex regular expressions, everything you may need can be accomplished
+by setting argsre to true. You can also set the `defaultArgsRe` configuration switch to true,
+so that every single route will automatically use the arguments-catcher regexp (you can override this
+setting on a per-route basis with `argsre: false`)
+
+Please remember that you can split the parameters and get them in a nice javascript object by using:
+```
+	routerInstance.getParams(string)
+```
+See below for an example.
 
 
 This is an example of a common `myRoutes` object:
@@ -211,8 +237,8 @@ Syntax 1:
 
 ```javascript
 	{
-		"#localpage(?:[?/](.*))?": {
-			handler: "localpage", events: "bs,bh"
+		"#localpage": {
+			handler: "localpage", events: "bs,bh", argsre: true
 		},
 
 		"ajaxPage.html(?:[?](.*))?": {
@@ -225,7 +251,7 @@ Syntax 2:
 
 ```javascript
 	[
-		{ "#localpage(?:[?/](.*))?": { handler: "localpage", events: "bs,bh" } },
+		{ "#localpage": { handler: "localpage", events: "bs,bh", argsre: true } },
 
 		{ "ajaxPage.html(?:[?](.*))?": { handler: "ajaxPage", events: "c,bs" } }
 	]
@@ -350,6 +376,7 @@ implement your own logic.
 
 You can also change the ui.toPage property from your handler, in order to re-route the transition
 to another location. This seems to work but I've not tested it extensively, so use it with caution.
+Remember to also change the ui.options.dataUrl property if you want the url to reflect this change.
 
 
 Common mistakes
@@ -391,6 +418,7 @@ the handler (.nextPage is the property that you need)
 * DOUBLE CHECK your REGULAR EXPRESSIONS! A typical mistake is forgetting the $ operator.
 If you have two pages, such as #product and #productList, a hypothetical route "#product" would
 match both pages, leading to unexpected behaviors. Use the $ operator when unsure: "#product$"
+or (better) the `argsre` (or `defaultArgsRe`) property set to true. See the `argsre` explanation above.
 
 * use setTimeout to avoid doing time-consuming tasks in a page-transition handler. If you have
 a route bound to pagebeforeshow (or even other events) and your code takes too much to execute
@@ -414,21 +442,22 @@ Router objects have the following public methods:
 	Returns an object with the parameters encoded in the url or null
 	if nothing's found. It's particularly useful when used with a general regexp
 	such as the following one:
-	`#page(?:[?](.*))?`
+		`#page(?:[?](.*))?`
+	or with the `argsre` property set to true.
 
 	For instance, if you have this url:  `#page?id=3&foo=bar`
 	and call:
 	`routerInstance.getParams("?id=3&foo=bar")`
-	or (if you used the regexp)
+	or (if you used the regexp or the argsre property)
 	`routerInstance.getParams(match[1])`
 
 	you'll get this object:
 	
 ```javascript				
-				{
-					id: "3",
-					foo: "bar"
-				}
+	{
+		id: "3",
+		foo: "bar"
+	}
 ```
 
 **There's an example under examples/backbone-example !**
@@ -444,6 +473,10 @@ jQuery Mobile Router supports the following parameters:
 
 *`firstMatchOnly`: stop searching for other route matches once the first one has been found
 		(only the first handler is executed). Defaults to false 
+
+*`defaultArgsRe`: always append the default arguments-catcher regular expression to the end of
+		each route, unless argsre is false. *I strongly suggest you set this to true*.
+		Please see the `argsre` explanation above. Defaults to false.
 
 *`defaultHandler`: a function reference or a function name to be called when no matching
 		route is found. You MUST also define the `defaultHandlerEvents` property when using
