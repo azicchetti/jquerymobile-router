@@ -480,13 +480,17 @@ jQuery Mobile Router supports the following parameters:
 
 *`defaultHandler`: a function reference or a function name to be called when no matching
 		route is found. You MUST also define the `defaultHandlerEvents` property when using
-    this one
+		this one
 
 *`defaultHandlerEvents`: the defaultHandler will be called for these events, if
 		no routes are matched. Please note that THESE EVENTS MUST BE DEFINED 
 		AT LEAST ONCE IN ANOTHER ROUTE, otherwise the defaultHandler won't be executed.
 		That is to say, if your routes are defined for "pagebeforeshow" and "pageshow"
 		events only, a defaultHandler for the "pagehide" event won't work!
+
+*`debugHandler`: a function reference or a function name that will be called with  
+		debugging information. If none supplied, this will default to ``console.log`` if 
+		such exists. Set this to `false` to disable debugging completely.
 
 
 You can pass an object with the above properties to the single router instance or set it

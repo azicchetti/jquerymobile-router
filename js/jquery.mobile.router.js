@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v20130514
+ * jQueryMobile-router v20130515
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011-2013 (c) Andrea Zicchetti
@@ -33,14 +33,6 @@ $(document).on("mobileinit", function(){
     ajaxApp: false, firstMatchOnly: false, defaultArgsRe: false
   }, $.mobile.jqmRouter || {});
 
-
-  var DEBUG = true;
-  function debug(err){
-    if (DEBUG) {
-      console.log(err);
-      if (err.stack){ console.log(err.stack); }
-    }
-  }
 
   var previousUrl = null, nextUrl = null, ignoreNext = false;
 
@@ -137,6 +129,17 @@ $(document).on("mobileinit", function(){
   $.extend($.mobile.Router.prototype,{
     documentEvts: { pagebeforechange:1, pagebeforeload:1, pageload:1 },
 
+    debug: function(err){ 
+      var conf = this.conf; 
+      if (conf.debugHandler){
+        conf.debugHandler.apply(this, arguments);
+      } else if (conf.debugHandler !== false && typeof(console) != "undefined" && console.log){
+	console.log.apply(console, arguments);
+        // for webkit
+        if (err.stack){ console.log(err.stack); }
+      }
+    },
+
     add: function(userRoutes,userHandlers,_skipAttach){
       if (!userRoutes) { return; }
 
@@ -174,7 +177,7 @@ $(document).on("mobileinit", function(){
                   _self.routesRex[r] = new RegExp(r);
                 }
               } else {
-                debug("can't set unsupported route " + trig[i]);
+                _self.debug("can't set unsupported route " + trig[i]);
               }
             }
           }
@@ -266,27 +269,31 @@ $(document).on("mobileinit", function(){
           }
           if ( handleFn ){
             try {
-	      if (bCDeferred && ui){
+              if (bCDeferred && ui){
                 ui.bCDeferred = bCDeferred;
-	      }
+              }
               handleFn.apply(_self.userHandlers, [e.type,res,ui,page,e]);
               bHandled = true;
-            }catch(err){ debug(err); }
+            } catch(err){
+              _self.debug(err);
+            }
           }
         }
-        if ( bHandled && _self.conf.firstMatchOnly ) return false;
+        if ( bHandled && _self.conf.firstMatchOnly ){ return false; }
       });
       //Pass to default if specified and can handle this event type
       if ( !bHandled && this.conf.defaultHandler && this.defaultHandlerEvents[e.type] ) {
         var handleFn;
         if ( typeof(this.conf.defaultHandler) == "function" ) {
-	  handleFn = this.conf.defaultHandler;
+          handleFn = this.conf.defaultHandler;
         } else if ( typeof(this.userHandlers[this.conf.defaultHandler]) == "function" ) {
           handleFn = this.userHandlers[this.conf.defaultHandler];
         }
 	try {
 	  handleFn.apply(this.userHandlers, [e.type, ui, page, e]);
-	} catch(err){ debug(err); }
+	} catch(err){
+          this.debug(err);
+        }
       }
 
       if (e.type=="pagebeforechange" && bHandled){
