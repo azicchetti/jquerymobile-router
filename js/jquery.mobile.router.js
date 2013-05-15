@@ -29,16 +29,25 @@ $(document).on("mobileinit", function(){
   */
 
   var config = $.extend({
-    fixFirstPageDataUrl: false, firstPageDataUrl: "index.html",
-    ajaxApp: false, firstMatchOnly: false
+    fixFirstPageDataUrl: false,
+    firstPageDataUrl: "index.html",
+    ajaxApp: false,
+    firstMatchOnly: false
   }, $.mobile.jqmRouter || {});
 
-
-  var DEBUG = true;
-  function debug(err){
-    if (DEBUG) {
-      console.log(err);
-      if (err.stack){ console.log(err.stack); }
+  var debug;
+  if (config.debugHandler === null){
+      // Debugging disabled
+      debug = function(){};
+  } else {
+    if (config.debugHandler){
+        debug = config.debugHandler;
+    } else {
+      if(console.log){
+        debug = function(){
+          console.log.apply(console, arguments);
+        };
+      }
     }
   }
 
