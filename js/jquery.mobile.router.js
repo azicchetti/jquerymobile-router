@@ -132,6 +132,7 @@ $(document).on("mobileinit", function(){
     debug: function(){
       var conf = this.conf;
       
+      // debugHandler === null means disable debug entirely
       if (conf.debugHandler !== null){
         if (conf.debugHandler){
           conf.debugHandler.apply(null, arguments);
