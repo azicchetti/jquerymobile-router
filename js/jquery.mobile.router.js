@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v20130515
+ * jQueryMobile-router v20130518
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011-2013 (c) Andrea Zicchetti
@@ -30,7 +30,8 @@ $(document).on("mobileinit", function(){
 
   var config = $.extend({
     fixFirstPageDataUrl: false, firstPageDataUrl: "index.html",
-    ajaxApp: false, firstMatchOnly: false, defaultArgsRe: false
+    ajaxApp: false, firstMatchOnly: false, defaultArgsRe: false,
+    bCAllowStringPage: false
   }, $.mobile.jqmRouter || {});
 
 
@@ -215,16 +216,26 @@ $(document).on("mobileinit", function(){
     },
 
     _processRoutes: function(e,ui,page) {
-      var _self=this, refUrl, url, $page, retry = 0;
-      if (e.type == "pagebeforechange"){
-	if ( typeof ui.toPage === "string" || ui.options._jqmrouter_bC ){
-	  // we won't support bC events fired with data.toPage != $(jQuery object) [because we want
-	  //   to pass the page reference to the handler]
-	  // we also have to return when _jqmrouter_bC is set to avoid loops
+      var _self=this, refUrl, url, $page, retry = 0,
+        bCEvent = (e.type == "pagebeforechange"),
+        toPageIsString = (typeof ui.toPage === "string");
+
+      if (bCEvent) {
+        if (ui.options._jqmrouter_bC) {
+          // we have to return when _jqmrouter_bC is set to avoid loops
           return;
-	}
-	// normalizing the "page" reference, we're sure that ui.toPage is a jQuery Object
-	page = ui.toPage;
+        }
+
+        if (toPageIsString) {
+          // Because we want to pass the page reference to the handler,
+          // we won't support bC events fired with data.toPage != $(jQuery object)
+          // unless the user explicitly requests it.
+          if (!_self.conf.bCAllowStringPage) 
+            return;
+        } else {
+          // normalizing the "page" reference, we're sure that ui.toPage is a jQuery Object
+          page = ui.toPage;
+        }
       }
       if ( e.type in { "pagebeforehide":true, "pagehide":true, "pageremove": true } ){
         refUrl = previousUrl;
@@ -258,7 +269,7 @@ $(document).on("mobileinit", function(){
         retry ++;
       } while( url.length == 0 && retry <= 1 );
 
-      var bHandled = false, bCDeferred = (e.type == "pagebeforechange" ? $.Deferred() : null);
+      var bHandled = false, bCDeferred = (bCEvent && !toPageIsString ? $.Deferred() : null);
       $.each(this.routes[e.type], function(route,handler){
         var res, handleFn;
         if ( (res = url.match(_self.routesRex[route])) ) {
@@ -296,7 +307,7 @@ $(document).on("mobileinit", function(){
         }
       }
 
-      if (e.type=="pagebeforechange" && bHandled){
+      if (bCDeferred && bHandled) {
         e.preventDefault();
 	bCDeferred.done(function(){
 	  // destination page is refUrl.href, ui.toPage or page.
