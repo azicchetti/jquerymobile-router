@@ -552,13 +552,8 @@ Notes on jQM router
 
 Have you ever wanted client-side parameters in the hash part of the url in jQuery Mobile?
 
-Well, jquery mobile router automatically enables this feature for you, using an official
-*"hack"* provided in the jQM documentation.
-
-* This hack isn't quite different from the one previously used by this plugin. But since
-there's something 'official', we'll be guaranteed that our code will be supported in future
-releases and I'm extremely happy about this.
-
+Well, jquery mobile router automatically enables this feature for you and fixes what's actually
+broken in the partial support offered by jQM itself. 
 
 For bugs, comments, patches and requests mail me!
 

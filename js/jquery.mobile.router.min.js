@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v20130515
+ * jQueryMobile-router v20130525
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011-2013 (c) Andrea Zicchetti
