@@ -28,6 +28,8 @@ In addition, if you want to use standard hashchange-based routers, you have to d
 
 What's new in the latest versions
 =====================
+* New options for pagebeforechange events: you can choose what kind of `toPage` argument your handler is
+expecting: a string, a jQuery object or both
 * Slightly changed the special support for pagebeforechange events. You have to call e.preventDefault()
 to pause the transition and use the deferred object
 * Added a "special" support for the pagebeforechange event, modeled after the pagebeforeload event
@@ -46,6 +48,9 @@ a simple object to play with them.
 
 Upgrade notes
 =====================
+v20130515 to v20130525
+	Your bC handlers need to explicitly invoke e.preventDefault()
+
 0.5 to 0.6
 	You can define a default handler in the "conf" object. This will be called when
 	no matching routes are found in the set you've provided
@@ -209,6 +214,17 @@ Please refer to the following schema to understand event codes (it's really stra
 
 By using an array, you can specify the **SAME REGULAR EXPRESSION** multiple times, but for **DIFFERENT EVENT TYPES**.
 
+The pagebeforechange event supports an additional parameter `step`, whose values can be:
+
+	* `page`: invoke the handler when `data.toPage` is a jQuery object.
+	  This is the default when step is omitted
+
+	* `url` (or `string`): invoke the handler when `data.toPage` is a string
+
+	* `all`: always invoke the handler
+
+This parameter is a convenient way to let the router know what kind of `data.toPage` parameter your handler is expecting. Please note that when the handler is invoked with a string argument, the `page` argument won't be available for manipulation.
+
 
 The "argsre" property is a boolean setting you can use to automatically append:
 ```
@@ -348,22 +364,26 @@ About pagebeforechange
 This is a special event withing jQuery Mobile, so it deserves a "special" support in the router.
 
 When you want to "stop" a certain transition until you've done something to the page, this is the
-right event to use. I guess this is the only scenario I can try to support with the router.
-Re-routing to another location seems to work as well, more on that later.
+right event to use. 
+Re-routing to another location works as well, more on that later.
 
 I've modeled the way it works after the pagebeforeload event. When your bC route is matched,
 you can call e.preventDefault() to temporarily stop the transition and make your modifications
 to the page.
 
-The page reference is normalized by the router (you should know from the docs that pagebeforechange
-is invoked twice, the first time with a string and eventually with a jQuery object) so that you get
-a nice jQuery object as if it was a standard pagebeforeshow event.
+You should know from jQM documentation that pagebeforechange is usually invoked twice, the first
+time with a string parameter and eventually with a jQuery object.
+By specifying the `step` parameter (see above), you can choose if you want your handler to be invoked
+either with the string url, the page object or both. If `step` is omitted, it defaults to `page`.
+
+The page reference is normalized by the router whenever it's possible (but when toPage is a string, page is
+set to null) so that you get a nice jQuery object as if it was a standard pagebeforeshow event.
 
 Take this simple handler as an example:
 ```
   beforeChangeHandler: function(type, match, ui, page, e){
 	e.preventDefault();
-	console.log(page); // this is the page reference
+	console.log(page); // this is the page reference or null if ui.toPage is a string
 	console.log("Waiting 6 seconds before resolving the deferred...");
 	setTimeout(function(){
 		ui.bCDeferred.resolve();
@@ -507,6 +527,25 @@ globally with this code (must be used BEFORE loading jquery.mobile.router.js):
 		};
 	});
 ```
+
+
+Phonegap/Cordova
+==============
+
+There is nothing to do to use the router in a Phonegap/Cordova environment, just include the
+cordova javascript file and you're done.
+
+However, you must pay attention to a super-stupid bug of the Android platform that impacts on the
+ability to use jQuery Mobile (not the router) in "ajax mode" on certain Android 3.x and 4.0.x versions:
+
+	http://code.google.com/p/android/issues/detail?id=17535
+
+If you experience something like this, there's a simple patch you can apply using the router and
+the pagebeforeload event.
+I won't put it here in the documentation since it's not a general use-case, but if you really need it,
+just open an issue on github or send me a private email.
+
+
 
 Notes on jQM router
 ==============

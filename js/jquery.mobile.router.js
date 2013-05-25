@@ -157,7 +157,7 @@ $(document).on("mobileinit", function(){
 	    if (_self.conf.defaultArgsRe){
 	      r += '(?:[?](.*))?$';
 	    }
-            _self.routes.pagebeforeshow[r] = el;
+            _self.routes.pagebeforeshow[r] = { handler: el, events: 'bs' };
             if ( ! _self.routesRex.hasOwnProperty(r) ){
               _self.routesRex[r] = new RegExp(r);
             }
@@ -172,7 +172,7 @@ $(document).on("mobileinit", function(){
                 if ( _self.routes[evt] === null ){
                   _self.routes[evt] = {};
                 }
-                _self.routes[evt][r] = el.handler;
+                _self.routes[evt][r] = el;
                 if ( ! _self.routesRex.hasOwnProperty(r) ){
                   _self.routesRex[r] = new RegExp(r);
                 }
@@ -215,16 +215,19 @@ $(document).on("mobileinit", function(){
     },
 
     _processRoutes: function(e,ui,page) {
-      var _self=this, refUrl, url, $page, retry = 0;
+      var _self=this, refUrl, url, $page, retry = 0, bCData = null;
       if (e.type == "pagebeforechange"){
-	if ( typeof ui.toPage === "string" || ui.options._jqmrouter_bC ){
-	  // we won't support bC events fired with data.toPage != $(jQuery object) [because we want
-	  //   to pass the page reference to the handler]
-	  // we also have to return when _jqmrouter_bC is set to avoid loops
+	if (ui.options._jqmrouter_bC){
+	  // we must return when _jqmrouter_bC is set to avoid loops
           return;
 	}
-	// normalizing the "page" reference, we're sure that ui.toPage is a jQuery Object
-	page = ui.toPage;
+        bCData = {
+          isString: typeof ui.toPage === "string",
+          deferred: $.Deferred(),
+          toPage: ui.toPage
+        };
+        // normalizing the "page" reference whenever it's possible, 'cause we want to pass it to the handler
+        page = !bCData.isString ? ui.toPage : null;
       }
       if ( e.type in { "pagebeforehide":true, "pagehide":true, "pageremove": true } ){
         refUrl = previousUrl;
@@ -258,23 +261,25 @@ $(document).on("mobileinit", function(){
         retry ++;
       } while( url.length == 0 && retry <= 1 );
 
-      var bHandled = false, bCDeferred = null, bCToPage = null;
-      if (e.type == "pagebeforechange"){
-         bCDeferred = $.Deferred();
-         bCToPage = ui.toPage;
-      }
-      $.each(this.routes[e.type], function(route,handler){
+      var bHandled = false;
+      $.each(this.routes[e.type], function(route,routeConf){
         var res, handleFn;
+        if (bCData && routeConf.step != 'all'){
+          routeConf.step = routeConf.step || 'page';  // default step is page
+          if ( (bCData.isString && routeConf.step == 'page') || (!bCData.isString && routeConf.step != 'page') ){
+            return;
+          }
+        }
         if ( (res = url.match(_self.routesRex[route])) ) {
-          if ( typeof(handler) == "function" ){
-            handleFn = handler;
-          } else if ( typeof(_self.userHandlers[handler]) == "function" ) {
-            handleFn = _self.userHandlers[handler];
+          if ( typeof(routeConf.handler) == "function" ){
+            handleFn = routeConf.handler;
+          } else if ( typeof(_self.userHandlers[routeConf.handler]) == "function" ) {
+            handleFn = _self.userHandlers[routeConf.handler];
           }
           if ( handleFn ){
             try {
-              if (bCDeferred && ui){
-                ui.bCDeferred = bCDeferred;
+              if (bCData && ui){
+                ui.bCDeferred = bCData.deferred;
               }
               handleFn.apply(_self.userHandlers, [e.type,res,ui,page,e]);
               bHandled = true;
@@ -300,10 +305,11 @@ $(document).on("mobileinit", function(){
         }
       }
 
-      if (e.type=="pagebeforechange" && e.isDefaultPrevented()){
-        bCDeferred.done(function(){
+      if (bCData && e.isDefaultPrevented()){
+        bCData.deferred.done(function(){
 	  // if the user re-routed the bC, we shouldn't set _jqmrouter_handled or _jqmrouter_bC
-	  var extraOpt = (bCToPage == ui.toPage ? { _jqmrouter_handled: true, _jqmrouter_bC: true } : null);
+	  var extraOpt = (bCData.toPage === ui.toPage ?
+            { _jqmrouter_handled: true, _jqmrouter_bC: true } : null);
 	  // destination page is refUrl.href, ui.toPage or page.
 	  // I'm using ui.toPage so that really crazy users may try to re-route the transition to
 	  //   another location by modifying this property from the handler.
