@@ -258,7 +258,11 @@ $(document).on("mobileinit", function(){
         retry ++;
       } while( url.length == 0 && retry <= 1 );
 
-      var bHandled = false, bCDeferred = (e.type == "pagebeforechange" ? $.Deferred() : null);
+      var bHandled = false, bCDeferred = null, bCToPage = null;
+      if (e.type == "pagebeforechange"){
+         bCDeferred = $.Deferred();
+         bCToPage = ui.toPage;
+      }
       $.each(this.routes[e.type], function(route,handler){
         var res, handleFn;
         if ( (res = url.match(_self.routesRex[route])) ) {
@@ -296,17 +300,16 @@ $(document).on("mobileinit", function(){
         }
       }
 
-      if (e.type=="pagebeforechange" && bHandled){
-        e.preventDefault();
-	bCDeferred.done(function(){
+      if (e.type=="pagebeforechange" && e.isDefaultPrevented()){
+        bCDeferred.done(function(){
+	  // if the user re-routed the bC, we shouldn't set _jqmrouter_handled or _jqmrouter_bC
+	  var extraOpt = (bCToPage == ui.toPage ? { _jqmrouter_handled: true, _jqmrouter_bC: true } : null);
 	  // destination page is refUrl.href, ui.toPage or page.
 	  // I'm using ui.toPage so that really crazy users may try to re-route the transition to
 	  //   another location by modifying this property from the handler.
-	  $.mobile.changePage(ui.toPage, {
-            _jqmrouter_handled: true,
-            _jqmrouter_bC: true,
+	  $.mobile.changePage(ui.toPage, $.extend({
             dataUrl: ui.options.dataUrl
-          });
+          }, extraOpt ));
 	});
       }
     },

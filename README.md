@@ -28,6 +28,8 @@ In addition, if you want to use standard hashchange-based routers, you have to d
 
 What's new in the latest versions
 =====================
+* Slightly changed the special support for pagebeforechange events. You have to call e.preventDefault()
+to pause the transition and use the deferred object
 * Added a "special" support for the pagebeforechange event, modeled after the pagebeforeload event
 * Support for jQM 1.3.0. Older jQM version are still supported in the legacy version
   (jquery.mobile.router-legacy.js)
@@ -349,8 +351,9 @@ When you want to "stop" a certain transition until you've done something to the 
 right event to use. I guess this is the only scenario I can try to support with the router.
 Re-routing to another location seems to work as well, more on that later.
 
-I've modeled the way it works after the pagebeforeload event. So, when your bC route is matched,
-the transition is temporarily stopped, so that you can make your modifications to the page.
+I've modeled the way it works after the pagebeforeload event. When your bC route is matched,
+you can call e.preventDefault() to temporarily stop the transition and make your modifications
+to the page.
 
 The page reference is normalized by the router (you should know from the docs that pagebeforechange
 is invoked twice, the first time with a string and eventually with a jQuery object) so that you get
@@ -359,6 +362,7 @@ a nice jQuery object as if it was a standard pagebeforeshow event.
 Take this simple handler as an example:
 ```
   beforeChangeHandler: function(type, match, ui, page, e){
+	e.preventDefault();
 	console.log(page); // this is the page reference
 	console.log("Waiting 6 seconds before resolving the deferred...");
 	setTimeout(function(){
@@ -367,9 +371,9 @@ Take this simple handler as an example:
   }
 ```
 
-In order to continue the transition, YOU MUST CALL: ui.bCDeferred.resolve();
+If you invoke preventDefault(), YOU MUST CALL: `ui.bCDeferred.resolve();` to continue the transition.
 
-Please DON'T call e.preventDefault() or $.mobile.changePage(...) in this handler, because the router
+Please DON'T call $.mobile.changePage(...) in this handler, because the router
 does that for you, but if you're trying to achieve something different (that is to say, the scenario
 described above does not match your situation) you may have to bind to pagebeforechange yourself and
 implement your own logic.
