@@ -314,7 +314,7 @@ $(document).on("mobileinit", function(){
 	  // I'm using ui.toPage so that really crazy users may try to re-route the transition to
 	  //   another location by modifying this property from the handler.
 	  $.mobile.changePage(ui.toPage, $.extend({
-            dataUrl: ui.options.dataUrl
+            dataUrl: ui.options.dataUrl, reverse: ui.options.reverse
           }, extraOpt ));
 	});
       }
