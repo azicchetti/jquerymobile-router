@@ -1,5 +1,5 @@
 /*!
- * jQueryMobile-router v20130525
+ * jQueryMobile-router v20130527
  * http://github.com/azicchetti/jquerymobile-router
  *
  * Copyright 2011-2013 (c) Andrea Zicchetti
@@ -37,10 +37,18 @@ $(document).on("mobileinit", function(){
   var previousUrl = null, nextUrl = null, ignoreNext = false;
 
   $(document).on("pagebeforechange", function(e, data) {
-    var toPage=( typeof data.toPage === "string" ) ? data.toPage : data.toPage.jqmData("url")||"";
-
     if ( data.options.hasOwnProperty("_jqmrouter_handled") ){ return; }
+
+    var toPage;
+    if ( typeof data.toPage === "string" ){
+      toPage = data.toPage;
+    } else {
+      toPage = data.toPage.jqmData("url") || "";
+      if (data.toPage.attr("id") == toPage){ toPage = "#" + toPage; }
+    }
+
     data.options._jqmrouter_handled = true;
+
     // handle form submissions
     if ( data.options.data && (data.options.type+"").toLowerCase() == "get" ){
       toPage += "?" + data.options.data;
@@ -215,7 +223,7 @@ $(document).on("mobileinit", function(){
     },
 
     _processRoutes: function(e,ui,page) {
-      var _self=this, refUrl, url, $page, retry = 0, bCData = null;
+      var _self=this, refUrl, url, retry = 0, bCData = null;
       if (e.type == "pagebeforechange"){
 	if (ui.options._jqmrouter_bC){
 	  // we must return when _jqmrouter_bC is set to avoid loops
@@ -234,32 +242,30 @@ $(document).on("mobileinit", function(){
       } else {
         refUrl = nextUrl;
       }
-      do {
-        if ( !refUrl ){
-          if ( page ){
-            $page = $(page);
-            refUrl = $page.jqmData("url");
-            if ( refUrl ){
-              if ( $page.attr("id") == refUrl ) { refUrl = "#" + refUrl; }
-              refUrl = $.mobile.path.parseUrl(refUrl);
-            }
-          }
-        } else if ( !this.documentEvts[e.type] && page && !$(page).jqmData("url") ){
-          return;
+
+      url = !this.conf.ajaxApp ?
+        refUrl.hash : (refUrl.pathname + refUrl.search + refUrl.hash)
+      ;
+      if (url.length == 0){
+        // if ajaxApp is false, url may be "" when the user clicks the back button
+        // and returns to the first page of the application (which is usually
+        // loaded without the hash part of the url). Let's handle this...
+        refUrl = null;
+        if (!this.documentEvts[e.type] && page){
+          refUrl = $(page).jqmData("url");
+        } else {
+          // mhm, we should be visiting the first page of the app
+          refUrl = $.mobile.firstPage.jqmData("url");
+          //refUrl = $(":jqmData(role=page):first").jqmData("url");
         }
-        if ( !refUrl ) { return; }
-        url = ( !this.conf.ajaxApp ?
-          refUrl.hash
-          :refUrl.pathname + refUrl.search + refUrl.hash
-        );
-        if ( url.length == 0 ){
-          // if ajaxApp is false, url may be "" when the user clicks the back button
-          // and returns to the first page of the application (which is usually
-          // loaded without the hash part of the url). Let's handle this...
-          refUrl = "";
+        if (refUrl){
+          refUrl = $.mobile.path.parseUrl("#" + refUrl);
+          url = !this.conf.ajaxApp ?
+            refUrl.hash : (refUrl.pathname + refUrl.search + refUrl.hash)
+          ;
         }
-        retry ++;
-      } while( url.length == 0 && retry <= 1 );
+      }
+      if (url.length == 0){ return; }
 
       var bHandled = false;
       $.each(this.routes[e.type], function(route,routeConf){
@@ -309,13 +315,24 @@ $(document).on("mobileinit", function(){
         bCData.deferred.done(function(){
 	  // if the user re-routed the bC, we shouldn't set _jqmrouter_handled or _jqmrouter_bC
 	  var extraOpt = (bCData.toPage === ui.toPage ?
-            { _jqmrouter_handled: true, _jqmrouter_bC: true } : null);
+            { _jqmrouter_handled: true, _jqmrouter_bC: true } : null
+          );
 	  // destination page is refUrl.href, ui.toPage or page.
 	  // I'm using ui.toPage so that really crazy users may try to re-route the transition to
 	  //   another location by modifying this property from the handler.
-	  $.mobile.changePage(ui.toPage, $.extend({
-            dataUrl: ui.options.dataUrl
-          }, extraOpt ));
+          $.mobile.changePage(ui.toPage, $.extend({
+            allowSamePageTransition: ui.options.allowSamePageTransition,
+            changeHash: ui.options.changeHash,
+            data: ui.options.data,
+            dataUrl: ui.options.dataUrl,
+            pageContainer: ui.options.pageContainer,
+            reloadPage: ui.options.reloadPage,
+            reverse: ui.options.reverse,
+            role: ui.options.role,
+            showLoadMsg: ui.options.showLoadMsg,
+            transition: ui.options.transition,
+            type: ui.options.type
+          }, extraOpt));
 	});
       }
     },

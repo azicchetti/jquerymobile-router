@@ -540,8 +540,9 @@ ability to use jQuery Mobile (not the router) in "ajax mode" on certain Android 
 
 	http://code.google.com/p/android/issues/detail?id=17535
 
-If you experience something like this, there's a simple patch you can apply using the router and
-the pagebeforeload event.
+Cordova 2.x includes a workaround for this, but if you need to use an older version for whatever reason,
+you may experience the dreaded "chromium error: -6". 
+However, there's a simple patch you can apply using the router and the pagebeforeload event.
 I won't put it here in the documentation since it's not a general use-case, but if you really need it,
 just open an issue on github or send me a private email.
 

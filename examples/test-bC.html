@@ -7,20 +7,24 @@
         <script type="text/javascript" src="../js/jquery.mobile.router.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
         <script type="text/javascript">
-        var router=new $.mobile.Router({
-          "#localpage2": {handler: "localpage", events: "bC", argsre: true},
-          "#localpage4": {handler: "localpage4", events: "bC", argsre: true},
-          "#index": { handler: function(type){
+        var router=new $.mobile.Router([
+          { "#localpage2": {handler: "localpage", events: "bC", argsre: true} }, 
+          { "#localpage2": {handler: "localpageShow", events: "bs", argsre: true} }, 
+          { "#localpage4": {handler: "localpage4", events: "bC", argsre: true} },
+          { "#index": { handler: function(type){
             console.log("Index has been "+(type=="pagehide"?"hidden":"shown"));
-          }, events: "h,s" }
-        },{
+          }, events: "h,s" } }
+        ],{
+          localpageShow: function(type,match,ui,page,e){
+                console.log(match[0]);
+          },
 	  localpage: function(type,match,ui,page,e){
 		e.preventDefault();
 		console.log("pagebeforechange evt:");
 		console.log(match);
 		console.log(page);
 		// if you want to re-route the transition to #localpage4, uncomment the following 2 lines
-		//ui.toPage="#localpage4";
+		//ui.toPage="#localpage4?pippo=pluto";
 		//ui.options.dataUrl="localpage4";
 		console.log("Waiting 6 seconds before resolving the deferred...");
 		setTimeout(function(){
@@ -30,7 +34,7 @@
           },
 
           localpage4: function(type,match,ui,page,e){
-            console.log("bC - localpage4");
+            console.log("bC - localpage4 "+match[0]);
           }
         });
         </script>
