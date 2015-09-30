@@ -99,8 +99,8 @@ var router=new $.mobile.Router([
         { "/restaurant.html[?]id=(\\d+)": { events: "i", handler: "restaurantDetail" } }, // handwritten regexp
         { "/events.html(?:[?](.*))?": { events: "i", handler: "events" } }, // handwritten regexp
         { "/eventDetail.html": { events: "i", handler: "eventDetail", argsre: true } },
-        { "/accomodations.html": { events: "i", handler: "accomodationsTaxonomy", argsre: true } },
-        { "/accomodationList.html(?:[?](.*))?": { events: "i", handler: "accomodations" } } // handwritten regexp
+        { "/accommodations.html": { events: "i", handler: "accommodationsTaxonomy", argsre: true } },
+        { "/accomodationList.html(?:[?](.*))?": { events: "i", handler: "accommodations" } } // handwritten regexp
 ], ControllerObject, { ajaxApp: true} );
 
 var router=new $.mobile.Router([
